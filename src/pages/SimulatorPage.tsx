@@ -1,6 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { SimulatorConfig, calculateLapTime, formatLapTime, SIMULATOR_CIRCUITS } from '@/data/simulatorData';
 import Leaderboard from '@/components/Leaderboard';
+import AvatarTTS from '@/components/AvatarTTS';
+import CircuitVisualization from '@/components/CircuitVisualization';
+import AdvancedSimulatorPanel from '@/components/AdvancedSimulatorPanel';
 import { cn } from '@/lib/utils';
 
 interface SimulatorResult {
@@ -30,8 +33,6 @@ export default function SimulatorPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [alonsosComment, setAlonsosComment] = useState<string>('');
   const [selectedCircuit, setSelectedCircuit] = useState(SIMULATOR_CIRCUITS[0]);
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
@@ -81,34 +82,32 @@ export default function SimulatorPage() {
     setAlonsosComment('');
   };
 
-  // Draw circuit visualization
-  const drawCircuit = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = '#1a1a1a';
-    ctx.lineWidth = 4;
-    
-    // Draw a simple racing line
-    ctx.beginPath();
-    ctx.moveTo(50, 200);
-    ctx.bezierCurveTo(200, 50, 400, 50, 550, 200);
-    ctx.bezierCurveTo(600, 300, 500, 400, 350, 350);
-    ctx.bezierCurveTo(200, 300, 100, 250, 50, 200);
-    ctx.stroke();
-  };
-
-  useState(() => {
-    const timer = setTimeout(drawCircuit, 100);
-    return () => clearTimeout(timer);
-  });
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
+      {/* Header with Circuit Selection */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="racing-title text-4xl mb-2">Racing Simulator</h1>
+          <p className="racing-subtitle">Advanced F1 Setup & Strategy Tool</p>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1">Circuit</label>
+            <select
+              value={selectedCircuit.id}
+              onChange={(e) => setSelectedCircuit(SIMULATOR_CIRCUITS.find(c => c.id === e.target.value) || SIMULATOR_CIRCUITS[0])}
+              className="racing-select"
+            >
+              {SIMULATOR_CIRCUITS.map(circuit => (
+                <option key={circuit.id} value={circuit.id}>{circuit.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Leaderboard */}
         <div className="lg:row-span-2">
@@ -120,209 +119,137 @@ export default function SimulatorPage() {
           />
         </div>
 
-        {/* Main Simulator */}
+        {/* Circuit Visualization */}
         <div className="lg:col-span-2">
-          <div className="racing-card p-6">
+          <div className="racing-card p-4 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="racing-title text-2xl">Circuit Dry Run</h2>
+              <h3 className="font-semibold">Circuit: {selectedCircuit.name}</h3>
               <div className="text-sm text-muted-foreground">
-                Lap Simulator • AI Coach
+                Base Time: {formatLapTime(selectedCircuit.baseTime)}
               </div>
             </div>
-
-            {/* Circuit Visualization */}
-            <div className="circuit-track mb-6 h-64 flex items-center justify-center bg-primary/20 relative">
-              <canvas
-                ref={canvasRef}
-                width={600}
-                height={300}
-                className="max-w-full max-h-full"
+            
+            <div className="h-80">
+              <CircuitVisualization 
+                circuitId={selectedCircuit.id}
+                isRunning={isRunning}
               />
-              {isRunning && (
-                <div className="absolute inset-0 flex items-center justify-center bg-primary/10">
-                  <div className="racing-card p-4 text-center">
-                    <div className="animate-racing-pulse text-2xl mb-2">🏎️</div>
-                    <div className="text-sm font-semibold">Running simulation...</div>
-                  </div>
-                </div>
-              )}
             </div>
-
-            {/* Configuration Controls */}
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              {/* Tires */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">Tyres</label>
-                <select
-                  value={config.tires}
-                  onChange={(e) => setConfig(prev => ({ ...prev, tires: e.target.value as any }))}
-                  className="racing-select w-full"
-                >
-                  <option value="soft">Soft</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                  <option value="wet">Wet</option>
-                  <option value="intermediate">Intermediate</option>
-                </select>
-              </div>
-
-              {/* Aero */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">Aero</label>
-                <select
-                  value={config.aero}
-                  onChange={(e) => setConfig(prev => ({ ...prev, aero: e.target.value as any }))}
-                  className="racing-select w-full"
-                >
-                  <option value="low">Low Downforce</option>
-                  <option value="medium">Medium Downforce</option>
-                  <option value="high">High Downforce</option>
-                </select>
-              </div>
-
-              {/* Engine Mode */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">Engine Mode</label>
-                <select
-                  value={config.engineMode}
-                  onChange={(e) => setConfig(prev => ({ ...prev, engineMode: e.target.value as any }))}
-                  className="racing-select w-full"
-                >
-                  <option value="conservative">Conservative</option>
-                  <option value="balanced">Balanced</option>
-                  <option value="aggressive">Aggressive</option>
-                  <option value="qualifying">Qualifying</option>
-                </select>
-              </div>
-
-              {/* Fuel */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Fuel ({config.fuel}%)
-                </label>
-                <input
-                  type="range"
-                  min="10"
-                  max="100"
-                  value={config.fuel}
-                  onChange={(e) => setConfig(prev => ({ ...prev, fuel: parseInt(e.target.value) }))}
-                  className="racing-slider w-full"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>10%</span>
-                  <span>100%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Control Buttons */}
-            <div className="flex items-center gap-3 mb-6">
-              <button
-                onClick={startDryRun}
-                disabled={isRunning}
-                className={cn(
-                  "racing-button-primary px-6 py-3 flex-1",
-                  isRunning && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                {isRunning ? "Running..." : "Start Dry Run"}
-              </button>
-              <button
-                onClick={resetConfig}
-                className="racing-button-secondary px-4 py-3"
-              >
-                Reset
-              </button>
-              <button
-                disabled={!currentResult}
-                className={cn(
-                  "racing-button-accent px-4 py-3",
-                  !currentResult && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                Share Result
-              </button>
-            </div>
-
-            {/* Results */}
-            {currentResult && (
-              <div className="racing-card p-4 bg-secondary/50 animate-fade-in-up">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold">Lap Result: {formatLapTime(currentResult.lapTime)}</h4>
-                  <button className="racing-button-accent px-3 py-1 text-xs">
-                    Share
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4 text-sm mb-3">
-                  <div>
-                    <span className="text-muted-foreground">Tyre wear:</span>
-                    <span className="ml-2 font-semibold">{currentResult.tireWear}%</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Fuel left:</span>
-                    <span className="ml-2 font-semibold">{currentResult.fuelLeft}%</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Reliability:</span>
-                    <span className="ml-2 font-semibold">{currentResult.reliability}%</span>
-                  </div>
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  • {currentResult.commentary}
-                </div>
-              </div>
-            )}
           </div>
+
+          {/* Advanced Simulator Panel */}
+          <AdvancedSimulatorPanel
+            config={config}
+            setConfig={setConfig}
+            onStartSimulation={startDryRun}
+            onResetConfig={resetConfig}
+            isRunning={isRunning}
+            currentResult={currentResult}
+          />
+
+          {/* Results Display */}
+          {currentResult && (
+            <div className="racing-card p-6 mt-6 animate-fade-in-up">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="racing-title text-xl">
+                  🏁 Lap Time: {formatLapTime(currentResult.lapTime)}
+                </h4>
+                <div className="text-sm text-muted-foreground">
+                  {selectedCircuit.name}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-1">
+                    {currentResult.sector1.toFixed(3)}s
+                  </div>
+                  <div className="text-sm text-muted-foreground">Sector 1</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-accent mb-1">
+                    {currentResult.sector2.toFixed(3)}s
+                  </div>
+                  <div className="text-sm text-muted-foreground">Sector 2</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-racing-blue mb-1">
+                    {currentResult.sector3.toFixed(3)}s
+                  </div>
+                  <div className="text-sm text-muted-foreground">Sector 3</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-sm mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Tire Wear:</span>
+                  <span className="font-semibold">{currentResult.tireWear}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Fuel Left:</span>
+                  <span className="font-semibold">{currentResult.fuelLeft}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Reliability:</span>
+                  <span className="font-semibold">{currentResult.reliability}%</span>
+                </div>
+              </div>
+
+              <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                <p className="text-sm font-medium">🗣️ Fernando: "{currentResult.commentary}"</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* AI Coach Panel */}
-        <div>
-          <div className="racing-card p-5">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-sm font-bold">
-                FA
-              </div>
-              <div>
-                <h3 className="font-semibold">Ai.lonso</h3>
-                <div className="text-xs text-muted-foreground">AI Coach</div>
-              </div>
+        {/* AI Coach Avatar */}
+        <div className="space-y-6">
+          <div className="racing-card p-4">
+            <div className="text-center mb-4">
+              <h3 className="font-semibold mb-2">AI Coach</h3>
             </div>
+            
+            <AvatarTTS 
+              className="mb-4"
+            />
 
             <div className="space-y-3 text-sm">
-              {alonsosComment ? (
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
-                  <p>{alonsosComment}</p>
+              <div className="border-t border-border pt-3">
+                <h4 className="font-semibold mb-2">Current Setup</h4>
+                <div className="space-y-1 text-xs">
+                  <div>Circuit: {selectedCircuit.name}</div>
+                  <div>Tires: {config.tires}</div>
+                  <div>Aero: {config.aero}</div>
+                  <div>Engine: {config.engineMode}</div>
+                  <div>Fuel: {config.fuel}%</div>
                 </div>
-              ) : (
-                <div className="text-muted-foreground">
-                  Configure your car setup and start a dry run to get AI coaching from Fernando.
+              </div>
+
+              {currentResult && (
+                <div className="border-t border-border pt-3">
+                  <h4 className="font-semibold mb-2">Performance</h4>
+                  <div className="space-y-1 text-xs">
+                    <div>Lap Time: {formatLapTime(currentResult.lapTime)}</div>
+                    <div>Tire Wear: {currentResult.tireWear}%</div>
+                    <div>Reliability: {currentResult.reliability}%</div>
+                  </div>
                 </div>
               )}
+            </div>
+          </div>
 
-              <div className="border-t border-border pt-3">
-                <h4 className="font-semibold mb-2">Driver Status</h4>
-                <div className="space-y-1 text-xs">
-                  <div>Tyre: {config.tires} • Wear: {currentResult?.tireWear || 0}%</div>
-                  <div>Fuel left: {currentResult?.fuelLeft || config.fuel}%</div>
-                  <div>Reliability: {currentResult?.reliability || 100}%</div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <p className="text-xs text-muted-foreground italic">
-                  Try micro-challenges: Predict fastest sector to earn points.
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <button className="racing-button-accent px-3 py-1 text-xs">
-                    Predict
-                  </button>
-                  <button className="racing-button-secondary px-3 py-1 text-xs">
-                    Mini-Quiz
-                  </button>
-                </div>
-              </div>
+          <div className="racing-card p-4">
+            <h4 className="font-semibold mb-3">Quick Actions</h4>
+            <div className="space-y-2">
+              <button className="racing-button-accent w-full py-2 text-sm">
+                🎯 Predict Best Sector
+              </button>
+              <button className="racing-button-secondary w-full py-2 text-sm">
+                🧠 Strategy Quiz  
+              </button>
+              <button className="racing-button-secondary w-full py-2 text-sm">
+                📊 Compare Times
+              </button>
             </div>
           </div>
         </div>
