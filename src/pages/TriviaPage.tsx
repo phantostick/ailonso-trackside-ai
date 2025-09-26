@@ -132,8 +132,8 @@ export default function TriviaPage() {
             Q{triviaState.currentIndex + 1} / {triviaState.questions.length}
           </div>
           <div className="mt-2 inline-flex items-center gap-3 racing-card px-3 py-2">
-            <div className="text-xs text-accent">Score:</div>
-            <div className="text-sm font-semibold text-accent">
+            <div className="text-xs text-foreground">Score:</div>
+            <div className="text-sm font-semibold text-primary">
               {triviaState.score} AMF1
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function TriviaPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">AMF1 Score:</span>
-                <span className="font-semibold text-accent">{triviaState.score}</span>
+                <span className="font-semibold text-primary">{triviaState.score}</span>
               </div>
             </div>
           </div>
