@@ -6,41 +6,41 @@
 
 @layer base {
   :root {
-    /* AMF1 Core Colors */
-    --background: 220 13% 9%; /* Dark racing background */
+    /* Aston Martin Core Colors */
+    --background: 220 13% 8%; /* Deep dark background */
     --foreground: 0 0% 95%; /* Light text */
 
-    --card: 220 13% 12%; /* Darker cards */
+    --card: 220 13% 11%; /* Darker cards */
     --card-foreground: 0 0% 95%;
 
-    --popover: 220 13% 12%;
+    --popover: 220 13% 11%;
     --popover-foreground: 0 0% 95%;
 
-    /* AMF1 Brand Colors */
-    --primary: 142 76% 36%; /* AMF1 Racing Green */
+    /* Aston Martin Brand Colors */
+    --primary: 162 88% 26%; /* Aston Martin Racing Green #0A7968 */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 142 76% 50%; /* Brighter green for effects */
+    --primary-glow: 162 88% 35%; /* Brighter green for effects */
 
-    --secondary: 220 13% 18%; /* Subtle dark accent */
+    --secondary: 220 13% 16%; /* Subtle dark accent */
     --secondary-foreground: 0 0% 95%;
 
-    --muted: 220 13% 15%;
+    --muted: 220 13% 13%;
     --muted-foreground: 220 9% 60%;
 
-    --accent: 45 93% 58%; /* AMF1 Racing Yellow */
+    --accent: 0 0% 85%; /* Aston Martin Silver */
     --accent-foreground: 220 13% 9%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 15%;
-    --ring: 142 76% 36%;
+    --border: 220 13% 18%;
+    --input: 220 13% 13%;
+    --ring: 162 88% 26%;
 
     /* Racing-specific colors */
     --racing-red: 0 84% 60%;
     --racing-blue: 217 91% 60%;
-    --track-green: 142 76% 45%;
+    --track-green: 162 88% 30%; /* Aston Martin track green */
     --warning-amber: 43 96% 56%;
 
     /* Gradients */
@@ -48,6 +48,7 @@
     --gradient-racing: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
     --gradient-track: linear-gradient(180deg, hsl(var(--track-green) / 0.8), hsl(var(--track-green) / 0.3));
     --gradient-dark: linear-gradient(180deg, hsl(var(--background)), hsl(var(--card)));
+    --gradient-aston: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(162 88% 35%) 100%);
 
     /* Shadows & Effects */
     --shadow-racing: 0 4px 20px hsl(var(--primary) / 0.3);
@@ -101,7 +102,7 @@
     font-family: var(--font-racing);
   }
 
-  /* Racing UI Components */
+  /* Aston Martin Racing UI Components */
   .racing-card {
     @apply bg-card border border-border rounded-xl shadow-lg;
     box-shadow: var(--shadow-card);
@@ -161,7 +162,7 @@
   /* Typography */
   .racing-title {
     @apply text-3xl font-bold tracking-tight;
-    background: var(--gradient-racing);
+    background: var(--gradient-aston);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

@@ -47,12 +47,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* AMF1 Racing Colors */
+        /* Aston Martin Racing Colors */
         racing: {
           red: "hsl(var(--racing-red))",
           blue: "hsl(var(--racing-blue))",
           green: "hsl(var(--track-green))",
           amber: "hsl(var(--warning-amber))",
+        },
+        aston: {
+          green: "hsl(var(--primary))",
+          silver: "hsl(var(--accent))",
         },
       },
       borderRadius: {
