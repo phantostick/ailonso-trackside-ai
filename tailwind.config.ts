@@ -53,6 +53,9 @@ export default {
           blue: "hsl(var(--racing-blue))",
           green: "hsl(var(--track-green))",
           amber: "hsl(var(--warning-amber))",
+          gold: "hsl(var(--racing-gold))",
+          silver: "hsl(var(--racing-silver))",
+          bronze: "hsl(var(--racing-bronze))",
         },
         aston: {
           green: "hsl(var(--primary))",

@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Trophy, Star, ShoppingBag, Clock, Target } from 'lucide-react';
+import { Calendar, Trophy, Star, ShoppingBag, Clock, Target, Flame } from 'lucide-react';
 
 // Mock user data
 const mockUser = {
@@ -19,7 +19,7 @@ const mockUser = {
   ],
   badges: [
     { id: 1, name: "Elite Racer", color: "bg-racing-gold", level: "Platinum" },
-    { id: 2, name: "Trivia Champion", color: "bg-accent", level: "Gold" },
+    { id: 2, name: "Trivia Champion", color: "bg-primary", level: "Gold" },
     { id: 3, name: "Community Leader", color: "bg-racing-silver", level: "Silver" },
     { id: 4, name: "Early Adopter", color: "bg-racing-bronze", level: "Bronze" },
   ],
@@ -36,6 +36,11 @@ const mockUser = {
     bestLapTime: "1:23.456",
     totalPlayTime: "28h 42m",
     rank: 12
+  },
+  streak: {
+    current: 15,
+    longest: 28,
+    lastActive: "2024-03-18"
   }
 };
 
@@ -212,6 +217,29 @@ export default function UserProfilePage() {
                   </div>
                   <p className="text-2xl font-bold text-primary">{mockUser.memberSince}</p>
                   <p className="text-sm text-muted-foreground">{membershipYears} years of racing</p>
+                </div>
+
+                <Separator />
+
+                {/* Streak Section */}
+                <div className="text-center p-4 bg-racing-amber/10 rounded-lg">
+                  <div className="flex items-center justify-center space-x-2 mb-2">
+                    <Flame className="w-5 h-5 text-racing-amber" />
+                    <span className="text-sm font-medium">Current Streak</span>
+                  </div>
+                  <p className="text-3xl font-bold text-racing-amber mb-1">{mockUser.streak.current}</p>
+                  <p className="text-xs text-muted-foreground mb-3">days active</p>
+                  
+                  <div className="flex justify-between text-xs">
+                    <div>
+                      <p className="font-medium">Longest</p>
+                      <p className="text-muted-foreground">{mockUser.streak.longest} days</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Last Active</p>
+                      <p className="text-muted-foreground">{mockUser.streak.lastActive}</p>
+                    </div>
+                  </div>
                 </div>
 
               </CardContent>
