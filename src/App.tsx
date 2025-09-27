@@ -9,6 +9,7 @@ import TriviaPage from "./pages/TriviaPage";
 import SimulatorPage from "./pages/SimulatorPage";
 import MerchPage from "./pages/MerchPage";
 import CliPITPage from "./pages/CliPITPage";
+import UserProfilePage from "./pages/UserProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/simulator" element={<SimulatorPage />} />
             <Route path="/merch" element={<MerchPage />} />
             <Route path="/clipit" element={<CliPITPage />} />
+            <Route path="/profile" element={<UserProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

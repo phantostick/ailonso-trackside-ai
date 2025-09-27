@@ -12,6 +12,7 @@ const navigationItems = [
   { path: '/clipit', label: 'CliPIT', icon: '📹' },
   { path: '/simulator', label: 'Racing Simulator', icon: '🏆' },
   { path: '/merch', label: 'Custom Merch', icon: '👕' },
+  { path: '/profile', label: 'Profile', icon: '👤' },
 ];
 
 export default function Layout({ children }: LayoutProps) {
