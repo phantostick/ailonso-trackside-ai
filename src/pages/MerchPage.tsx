@@ -107,9 +107,9 @@ export default function MerchPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="mb-8">
-        <h1 className="racing-title text-4xl mb-4">Custom Merch</h1>
+        <h1 className="racing-title text-4xl mb-4">Style Studio</h1>
         <p className="text-muted-foreground text-lg">
-          Design your personalized AMF1 gear with custom names and colors
+          Alonso guided outfitting: fans answer a few quick prompts and get smart bundles—jerseys, caps, layers—optimized for the event's weather and circuit.
         </p>
       </div>
 

@@ -10,7 +10,7 @@ export default function HomePage() {
           {/* Main Title */}
           <div className="mb-8">
             <h1 className="racing-title text-6xl md:text-8xl mb-4">
-              Ai.lonso
+              Ask Alonso
             </h1>
             <p className="racing-subtitle text-xl md:text-2xl mb-2">
               Your Personal F1 Racing AI Coach
@@ -45,7 +45,7 @@ export default function HomePage() {
             >
               <div className="text-4xl mb-3">🏆</div>
               <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                Racing Simulator
+                Racecraft Simulator
               </h3>
               <p className="text-sm text-muted-foreground">
                 Configure your car and run virtual laps
@@ -61,7 +61,7 @@ export default function HomePage() {
                 CliPIT
               </h3>
               <p className="text-sm text-muted-foreground">
-                AI-powered video analysis tool (Coming Soon)
+                Alonso captures highlight moments and delivers rights-cleared, auto-captioned clips ready for TikTok, Instagram, and Stories.
               </p>
             </Link>
 
@@ -71,10 +71,10 @@ export default function HomePage() {
             >
               <div className="text-4xl mb-3">👕</div>
               <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                Custom Merch
+                Style Studio
               </h3>
               <p className="text-sm text-muted-foreground">
-                Design your personalized AMF1 gear
+                Alonso guided outfitting: fans answer a few quick prompts and get smart bundles—jerseys, caps, layers—optimized for the event's weather and circuit.
               </p>
             </Link>
           </div>
@@ -91,7 +91,7 @@ export default function HomePage() {
       <section className="py-16 px-8 bg-card/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="racing-title text-4xl mb-4">Why Choose Ai.lonso?</h2>
+            <h2 className="racing-title text-4xl mb-4">Why Choose Ask Alonso?</h2>
             <p className="text-muted-foreground text-lg">
               The most comprehensive F1 AI experience on the web
             </p>

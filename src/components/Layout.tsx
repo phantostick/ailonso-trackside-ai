@@ -10,8 +10,8 @@ const navigationItems = [
   { path: '/', label: 'Ask Alonso', icon: '🏎️' },
   { path: '/trivia', label: 'Green-Light Trivia', icon: '🏁' },
   { path: '/clipit', label: 'CliPIT', icon: '📹' },
-  { path: '/simulator', label: 'Racing Simulator', icon: '🏆' },
-  { path: '/merch', label: 'Custom Merch', icon: '👕' },
+  { path: '/simulator', label: 'Racecraft Simulator', icon: '🏆' },
+  { path: '/merch', label: 'Style Studio', icon: '👕' },
   { path: '/profile', label: 'Profile', icon: '👤' },
 ];
 
@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
           {/* AMF1 Logo */}
           <div className="flex items-center space-x-3">
             <div className="racing-title text-2xl font-bold">AMF1</div>
-            <div className="text-accent text-sm font-semibold">Ai.lonso</div>
+            <div className="text-accent text-sm font-semibold">Ask Alonso</div>
           </div>
 
           {/* Navigation Links */}
@@ -66,7 +66,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-card border-t border-border py-8 mt-16">
         <div className="max-w-7xl mx-auto px-8 text-center">
-          <div className="racing-title text-xl mb-2">AMF1 • Ai.lonso</div>
+          <div className="racing-title text-xl mb-2">AMF1 • Ask Alonso</div>
           <p className="text-muted-foreground text-sm">
             Unofficial fan website • Built with passion for Formula 1
           </p>

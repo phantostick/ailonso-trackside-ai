@@ -25,8 +25,7 @@ export default function CliPITPage() {
         {/* Description */}
         <div className="max-w-3xl mx-auto text-muted-foreground mb-12">
           <p className="text-lg">
-            The home of AMF1's most epic moments, viral team radio, and unforgettable racing highlights.
-            From Fernando's legendary overtakes to behind-the-scenes team celebrations.
+            Alonso captures highlight moments and delivers rights-cleared, auto-captioned clips ready for TikTok, Instagram, and Stories.
           </p>
         </div>
       </div>
