@@ -108,7 +108,7 @@ export default function SimulatorPage() {
           
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="racing-title text-5xl mb-4">Racing Simulators</h1>
+            <h1 className="racing-title text-5xl mb-4">Racecraft Simulators</h1>
             <p className="racing-subtitle text-xl">Choose Your Racing Experience</p>
           </div>
 
@@ -274,7 +274,7 @@ export default function SimulatorPage() {
       {/* Header with Circuit Selection */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="racing-title text-4xl mb-2">Racing Simulator</h1>
+          <h1 className="racing-title text-4xl mb-2">Racecraft Simulator</h1>
           <p className="racing-subtitle">Advanced F1 Setup & Strategy Tool</p>
         </div>
         

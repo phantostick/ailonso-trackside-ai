@@ -124,7 +124,7 @@ export default function TriviaPage() {
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="racing-title text-4xl">Quiz Pit</h1>
+          <h1 className="racing-title text-4xl">Green-Light Trivia</h1>
           <p className="mt-1 text-sm text-muted-foreground">Test your racing knowledge</p>
         </div>
         <div className="text-right">
