@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import MockTTS from '@/components/MockTTS';
 
 interface RaceClip {
   id: string;
@@ -150,10 +151,6 @@ export default function CliPITPage() {
       <div className="racing-card p-4 mb-6">
         <div className="flex flex-wrap justify-center gap-8 text-center">
           <div>
-            <div className="text-2xl font-bold text-accent">156</div>
-            <div className="text-xs text-muted-foreground">AI Clips Generated</div>
-          </div>
-          <div>
             <div className="text-2xl font-bold text-accent">2.4M</div>
             <div className="text-xs text-muted-foreground">Total Downloads</div>
           </div>
@@ -166,6 +163,11 @@ export default function CliPITPage() {
             <div className="text-xs text-muted-foreground">Rights Cleared</div>
           </div>
         </div>
+      </div>
+
+      {/* TTS Assistant */}
+      <div className="mb-6">
+        <MockTTS onHighlightRequest={(request) => console.log('Highlight request:', request)} />
       </div>
 
       {/* Filters */}
