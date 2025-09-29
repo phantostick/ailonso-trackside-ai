@@ -13,8 +13,7 @@ npm run dev
 ```
 
 Things to do :
-- Add avatar
-- change names for the use cases
-- implement clipit and racecraft simulator properly
-- add user profile where user can see their achievements/badges/leaderboard position etc
+- Add avatar and alonso tts
+- implement racecraft simulator properly
+- Add badges and achievements tab?? (low priority)
 
