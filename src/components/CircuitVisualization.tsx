@@ -128,43 +128,81 @@ export default function CircuitVisualization({ circuitId, isRunning, progress = 
     ctx.fillText(`${layout.sectors.length} Sectors`, 20, 50);
   };
 
-  const drawCar = (ctx: CanvasRenderingContext2D, layout: CircuitLayout) => {
-    const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    pathElement.setAttribute('d', layout.path);
+const drawCar = (ctx: CanvasRenderingContext2D, layout: CircuitLayout) => {
+    // Simple parametric approach for car animation along circuit path
+    const progress = (carPositionRef.current % 1000) / 1000;
     
-    const pathLength = pathElement.getTotalLength?.() || 1000;
-    const position = (carPositionRef.current % pathLength) / pathLength;
+    // Calculate approximate position along the circuit based on progress
+    let x, y;
     
-    // Calculate car position along the path
-    const point = pathElement.getPointAtLength?.(position * pathLength);
-    if (point) {
-      ctx.save();
-      
-      // Draw car shadow
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-      ctx.beginPath();
-      ctx.ellipse(point.x + 2, point.y + 2, 8, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Draw car body
-      ctx.fillStyle = '#22c55e';
-      ctx.beginPath();
-      ctx.ellipse(point.x, point.y, 8, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Draw car details
-      ctx.fillStyle = '#facc15';
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-      
-      ctx.restore();
+    if (layout.name === 'Monza') {
+      // Monza: rectangular-ish circuit
+      const t = progress * 4; // 4 segments
+      if (t < 1) {
+        x = 50 + (200 - 50) * t;
+        y = 150 + (80 - 150) * t;
+      } else if (t < 2) {
+        x = 200 + (480 - 200) * (t - 1);
+        y = 80 + (130 - 80) * (t - 1);
+      } else if (t < 3) {
+        x = 480 + (200 - 480) * (t - 2);
+        y = 130 + (300 - 130) * (t - 2);
+      } else {
+        x = 200 + (50 - 200) * (t - 3);
+        y = 300 + (150 - 300) * (t - 3);
+      }
+    } else if (layout.name === 'Monaco') {
+      // Monaco: tight street circuit
+      const angle = progress * Math.PI * 2;
+      const centerX = 265;
+      const centerY = 220;
+      const radiusX = 185;
+      const radiusY = 120;
+      x = centerX + Math.cos(angle) * radiusX;
+      y = centerY + Math.sin(angle) * radiusY;
+    } else {
+      // Silverstone: flowing circuit
+      const angle = progress * Math.PI * 2;
+      const centerX = 290;
+      const centerY = 300;
+      const radiusX = 220;
+      const radiusY = 180;
+      x = centerX + Math.cos(angle) * radiusX;
+      y = centerY + Math.sin(angle) * radiusY;
     }
+    
+    ctx.save();
+    
+    // Draw car shadow
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.ellipse(x + 2, y + 2, 8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Draw car body (Aston Martin green)
+    ctx.fillStyle = '#00594D';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Draw car details (yellow accents)
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Add car number
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 8px ui-sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('14', x, y + 2);
+    
+    ctx.restore();
   };
 
   const startAnimation = () => {
     const animate = () => {
-      carPositionRef.current += 3;
+      carPositionRef.current += 8; // Faster animation
       drawCircuit();
       animationRef.current = requestAnimationFrame(animate);
     };
