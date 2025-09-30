@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SimulatorConfig, calculateLapTime, formatLapTime, SIMULATOR_CIRCUITS } from '@/data/simulatorData';
 import Leaderboard from '@/components/Leaderboard';
-import AvatarTTS from '@/components/AvatarTTS';
+import MockTTS from '@/components/MockTTS';
 import CircuitImage from '@/components/CircuitImage';
 import AdvancedSimulatorPanel from '@/components/AdvancedSimulatorPanel';
 import RaceWeekSimulator from '@/components/RaceWeekSimulator';
@@ -37,7 +37,10 @@ export default function SimulatorPage() {
     tires: 'soft',
     aero: 'medium',
     engineMode: 'balanced',
-    fuel: 50
+    fuel: 50,
+    suspension: 'medium',
+    brakeBalance: 60,
+    differential: 'medium'
   });
 
   const [results, setResults] = useState<SimulatorResult[]>([
@@ -50,28 +53,22 @@ export default function SimulatorPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [alonsosComment, setAlonsosComment] = useState<string>('');
   const [selectedCircuit, setSelectedCircuit] = useState(SIMULATOR_CIRCUITS[0]);
-
-  const speakText = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 0.8;
-      speechSynthesis.speak(utterance);
-    }
-  };
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const startDryRun = async () => {
     setIsRunning(true);
     setCurrentResult(null);
     setAlonsosComment('Starting dry run with your configuration...');
+    setIsSpeaking(true);
     
     // Simulate the lap
     setTimeout(() => {
       const result = calculateLapTime(config, selectedCircuit);
       setCurrentResult(result);
       setAlonsosComment(result.commentary);
-      speakText(result.commentary);
+      
+      // TTS will handle speaking
+      setTimeout(() => setIsSpeaking(false), 3000);
       
       // Add to leaderboard
       const newEntry: SimulatorResult = {
@@ -93,7 +90,10 @@ export default function SimulatorPage() {
       tires: 'soft',
       aero: 'medium',
       engineMode: 'balanced',
-      fuel: 50
+      fuel: 50,
+      suspension: 'medium',
+      brakeBalance: 60,
+      differential: 'medium'
     });
     setCurrentResult(null);
     setAlonsosComment('');
@@ -415,10 +415,12 @@ export default function SimulatorPage() {
         <div className="space-y-6">
           <div className="racing-card p-4">
             <div className="text-center mb-4">
-              <h3 className="font-semibold mb-2">AI Coach</h3>
+              <h3 className="font-semibold mb-2">Fernando's AI Coach</h3>
             </div>
             
-            <AvatarTTS 
+            <MockTTS 
+              text={alonsosComment}
+              isSpeaking={isSpeaking}
               className="mb-4"
             />
 

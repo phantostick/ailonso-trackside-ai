@@ -3,6 +3,9 @@ export interface SimulatorConfig {
   aero: 'low' | 'medium' | 'high';
   engineMode: 'conservative' | 'balanced' | 'aggressive' | 'qualifying';
   fuel: number; // percentage
+  suspension?: 'soft' | 'medium' | 'stiff';
+  brakeBalance?: number; // 50-70% (front bias)
+  differential?: 'open' | 'medium' | 'locked';
 }
 
 export interface SimulatorResult {
@@ -77,6 +80,20 @@ export const calculateLapTime = (config: SimulatorConfig, circuit = SIMULATOR_CI
     aggressive: { speed: -0.8, reliability: -3, fuel: 1.4 },
     qualifying: { speed: -1.8, reliability: -5, fuel: 2.0 }
   };
+
+  // Suspension effects
+  const suspensionEffects = {
+    soft: { cornering: -0.3, stability: 0.2 },
+    medium: { cornering: 0, stability: 0 },
+    stiff: { cornering: 0.4, stability: -0.3 }
+  };
+
+  // Differential effects
+  const differentialEffects = {
+    open: { cornering: -0.2, traction: -0.3 },
+    medium: { cornering: 0, traction: 0 },
+    locked: { cornering: 0.3, traction: 0.4 }
+  };
   
   // Apply tire effects
   lapTime += tireEffects[config.tires].speed;
@@ -93,6 +110,26 @@ export const calculateLapTime = (config: SimulatorConfig, circuit = SIMULATOR_CI
   const engineImpact = engineEffects[config.engineMode];
   lapTime += engineImpact.speed;
   reliabilityImpact += engineImpact.reliability;
+  
+  // Apply suspension effects (if set)
+  if (config.suspension) {
+    const suspensionImpact = suspensionEffects[config.suspension];
+    lapTime += suspensionImpact.cornering * circuit.characteristics.cornering_importance;
+  }
+
+  // Apply differential effects (if set)
+  if (config.differential) {
+    const diffImpact = differentialEffects[config.differential];
+    lapTime += diffImpact.traction * 0.3;
+  }
+
+  // Apply brake balance effects (if set)
+  if (config.brakeBalance) {
+    // Optimal brake balance is around 58-62% front
+    const optimalBalance = 60;
+    const balanceDeviation = Math.abs(config.brakeBalance - optimalBalance);
+    lapTime += balanceDeviation * 0.02; // Penalty for being off optimal
+  }
   
   // Fuel weight penalty (heavier = slower)
   const fuelWeight = config.fuel / 100;

@@ -167,6 +167,77 @@ export default function AdvancedSimulatorPanel({
               <span>Race Distance</span>
             </div>
           </div>
+
+          {/* Suspension */}
+          <div>
+            <label className="block text-sm font-semibold mb-3">Suspension: {config.suspension || 'medium'}</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['soft', 'medium', 'stiff'] as const).map((setting) => (
+                <button
+                  key={setting}
+                  onClick={() => setConfig({ ...config, suspension: setting })}
+                  className={cn(
+                    "py-2 px-3 rounded-lg border-2 text-sm font-medium transition-all capitalize",
+                    (config.suspension || 'medium') === setting
+                      ? "border-primary bg-primary/10"
+                      : "border-muted hover:border-primary/50"
+                  )}
+                >
+                  {setting}
+                </button>
+              ))}
+            </div>
+            <div className="text-xs text-muted-foreground mt-2">
+              {(config.suspension || 'medium') === 'soft' && "Better over bumps, less responsive"}
+              {(config.suspension || 'medium') === 'medium' && "Balanced for most conditions"}
+              {(config.suspension || 'medium') === 'stiff' && "Sharp response, needs smooth track"}
+            </div>
+          </div>
+
+          {/* Brake Balance */}
+          <div>
+            <label className="block text-sm font-semibold mb-3">
+              Brake Balance: {config.brakeBalance || 60}% Front
+            </label>
+            <input
+              type="range"
+              min="50"
+              max="70"
+              value={config.brakeBalance || 60}
+              onChange={(e) => setConfig({ ...config, brakeBalance: parseInt(e.target.value) })}
+              className="racing-slider w-full"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+              <span>Rear Bias</span>
+              <span>Front Bias</span>
+            </div>
+          </div>
+
+          {/* Differential */}
+          <div>
+            <label className="block text-sm font-semibold mb-3">Differential: {config.differential || 'medium'}</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['open', 'medium', 'locked'] as const).map((setting) => (
+                <button
+                  key={setting}
+                  onClick={() => setConfig({ ...config, differential: setting })}
+                  className={cn(
+                    "py-2 px-3 rounded-lg border-2 text-sm font-medium transition-all capitalize",
+                    (config.differential || 'medium') === setting
+                      ? "border-primary bg-primary/10"
+                      : "border-muted hover:border-primary/50"
+                  )}
+                >
+                  {setting}
+                </button>
+              ))}
+            </div>
+            <div className="text-xs text-muted-foreground mt-2">
+              {(config.differential || 'medium') === 'open' && "Better rotation, less traction"}
+              {(config.differential || 'medium') === 'medium' && "Balanced for most corners"}
+              {(config.differential || 'medium') === 'locked' && "More traction, less agile"}
+            </div>
+          </div>
         </div>
       )}
 

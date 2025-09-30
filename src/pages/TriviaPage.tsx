@@ -48,33 +48,30 @@ export default function TriviaPage() {
   const [isLocked, setIsLocked] = useState(false);
   const [timeUntilUnlock, setTimeUntilUnlock] = useState('');
 
-  // Check if quiz is locked (24h cooldown)
+  // Check if quiz is locked (24h after completion)
   useEffect(() => {
     const checkLockStatus = () => {
-      if (!triviaState.completedAt) {
+      const completionTimestamp = localStorage.getItem('triviaCompletionTime');
+      if (!completionTimestamp) {
         setIsLocked(false);
         return;
       }
 
-      const completedTime = new Date(triviaState.completedAt);
-      const now = new Date();
+      const completedAt = parseInt(completionTimestamp);
+      const now = Date.now();
+      const hoursSince = (now - completedAt) / (1000 * 60 * 60);
       
-      // Get next UTC midnight
-      const nextMidnight = new Date(Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate() + 1,
-        0, 0, 0, 0
-      ));
-
-      if (now < nextMidnight && completedTime.getUTCDate() === now.getUTCDate()) {
+      if (hoursSince < 24) {
         setIsLocked(true);
-        const hoursLeft = Math.floor((nextMidnight.getTime() - now.getTime()) / (1000 * 60 * 60));
-        const minutesLeft = Math.floor(((nextMidnight.getTime() - now.getTime()) % (1000 * 60 * 60)) / (1000 * 60));
+        const unlockTime = completedAt + 24 * 60 * 60 * 1000;
+        const diff = unlockTime - now;
+        const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         setTimeUntilUnlock(`${hoursLeft}h ${minutesLeft}m`);
       } else {
         setIsLocked(false);
         setTimeUntilUnlock('');
+        localStorage.removeItem('triviaCompletionTime');
       }
     };
 
@@ -82,7 +79,7 @@ export default function TriviaPage() {
     const interval = setInterval(checkLockStatus, 60000); // Update every minute
 
     return () => clearInterval(interval);
-  }, [triviaState.completedAt]);
+  }, []);
 
   // Save state to localStorage
   useEffect(() => {
@@ -137,6 +134,20 @@ export default function TriviaPage() {
     setAlonsosExplanation(explanation);
     setShowExplanation(true);
     speakText(explanation);
+
+    // Check if this is the 5th question
+    const totalAnswered = Object.keys(triviaState.submitted).length + 1;
+    if (totalAnswered === 5) {
+      // Lock the quiz for 24 hours
+      const completionTime = Date.now();
+      localStorage.setItem('triviaCompletionTime', completionTime.toString());
+      setIsLocked(true);
+      const unlockTime = completionTime + 24 * 60 * 60 * 1000;
+      const diff = unlockTime - Date.now();
+      const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+      const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      setTimeUntilUnlock(`${hoursLeft}h ${minutesLeft}m`);
+    }
   };
 
   const nextQuestion = () => {
@@ -201,13 +212,13 @@ export default function TriviaPage() {
               <Clock className="w-8 h-8 text-primary" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold mb-2">Quiz Locked for 24 Hours</h2>
+          <h2 className="text-2xl font-bold mb-2">Quiz Completed!</h2>
           <p className="text-muted-foreground mb-2">
-            You've completed today's trivia! Come back tomorrow at UTC midnight for a new quiz.
+            You can take the next quiz in:
           </p>
           {timeUntilUnlock && (
-            <p className="text-sm text-primary font-semibold">
-              Unlocks in: {timeUntilUnlock}
+            <p className="text-3xl font-bold text-primary mb-4">
+              {timeUntilUnlock}
             </p>
           )}
           <p className="text-sm text-muted-foreground mt-4">

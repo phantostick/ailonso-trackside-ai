@@ -4,9 +4,12 @@ import { Input } from '@/components/ui/input';
 
 interface MockTTSProps {
   onHighlightRequest?: (request: string) => void;
+  text?: string;
+  isSpeaking?: boolean;
+  className?: string;
 }
 
-export default function MockTTS({ onHighlightRequest }: MockTTSProps) {
+export default function MockTTS({ onHighlightRequest, text, isSpeaking: externalIsSpeaking, className }: MockTTSProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [userInput, setUserInput] = useState('');
@@ -62,18 +65,29 @@ export default function MockTTS({ onHighlightRequest }: MockTTSProps) {
     }
   };
 
+  const displayIsSpeaking = externalIsSpeaking ?? isSpeaking;
+  const displayText = text || (messages.length > 0 ? messages[messages.length - 1].text : '');
+
   return (
-    <div className="racing-card p-6">
+    <div className={className || "racing-card p-6"}>
       <div className="text-center mb-6">
         <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center relative">
           <div className="text-3xl">🤖</div>
           {isListening && (
             <div className="absolute inset-0 rounded-full bg-accent/20 animate-pulse"></div>
           )}
-          {isSpeaking && (
+          {displayIsSpeaking && (
             <div className="absolute inset-0 rounded-full bg-primary/20 animate-bounce"></div>
           )}
         </div>
+        <h3 className="racing-subtitle mb-2">{text ? "Fernando's AI Coach" : "CliPIT AI Assistant"}</h3>
+        {text && displayText && (
+          <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 mb-4">
+            <p className="text-sm">🗣️ "{displayText}"</p>
+          </div>
+        )}
+        {!text && (
+          <>
         <h3 className="racing-subtitle mb-2">CliPIT AI Assistant</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Ask me to find and trim specific race highlights
@@ -143,6 +157,8 @@ export default function MockTTS({ onHighlightRequest }: MockTTSProps) {
           <p className="mb-1">Try saying: "Show me overtakes from Monaco" or "Find pit stop highlights"</p>
           <p><strong>AI Score:</strong> Measures engagement potential (0-100) based on action intensity, audio quality, and visual appeal</p>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
