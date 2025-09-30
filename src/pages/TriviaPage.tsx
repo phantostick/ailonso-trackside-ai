@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getRandomQuestions, TriviaQuestion } from '@/data/triviaQuestions';
 import Leaderboard from '@/components/Leaderboard';
 import { cn } from '@/lib/utils';
+import { Clock } from 'lucide-react';
 
 interface TriviaState {
   currentIndex: number;
@@ -9,6 +10,7 @@ interface TriviaState {
   submitted: { [key: string]: boolean };
   score: number;
   questions: TriviaQuestion[];
+  completedAt: string | null;
 }
 
 const SCORE_PER_CORRECT = 1;
@@ -21,17 +23,71 @@ const initialPlayers = [
 ];
 
 export default function TriviaPage() {
-  const [triviaState, setTriviaState] = useState<TriviaState>({
-    currentIndex: 0,
-    answers: {},
-    submitted: {},
-    score: 0,
-    questions: getRandomQuestions(5)
+  const [triviaState, setTriviaState] = useState<TriviaState>(() => {
+    const saved = localStorage.getItem('triviaState');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...parsed,
+        questions: getRandomQuestions(5) // Always get fresh questions
+      };
+    }
+    return {
+      currentIndex: 0,
+      answers: {},
+      submitted: {},
+      score: 0,
+      questions: getRandomQuestions(5),
+      completedAt: null
+    };
   });
 
   const [players] = useState(initialPlayers);
   const [alonsosExplanation, setAlonsosExplanation] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [timeUntilUnlock, setTimeUntilUnlock] = useState('');
+
+  // Check if quiz is locked (24h cooldown)
+  useEffect(() => {
+    const checkLockStatus = () => {
+      if (!triviaState.completedAt) {
+        setIsLocked(false);
+        return;
+      }
+
+      const completedTime = new Date(triviaState.completedAt);
+      const now = new Date();
+      
+      // Get next UTC midnight
+      const nextMidnight = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() + 1,
+        0, 0, 0, 0
+      ));
+
+      if (now < nextMidnight && completedTime.getUTCDate() === now.getUTCDate()) {
+        setIsLocked(true);
+        const hoursLeft = Math.floor((nextMidnight.getTime() - now.getTime()) / (1000 * 60 * 60));
+        const minutesLeft = Math.floor(((nextMidnight.getTime() - now.getTime()) % (1000 * 60 * 60)) / (1000 * 60));
+        setTimeUntilUnlock(`${hoursLeft}h ${minutesLeft}m`);
+      } else {
+        setIsLocked(false);
+        setTimeUntilUnlock('');
+      }
+    };
+
+    checkLockStatus();
+    const interval = setInterval(checkLockStatus, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, [triviaState.completedAt]);
+
+  // Save state to localStorage
+  useEffect(() => {
+    localStorage.setItem('triviaState', JSON.stringify(triviaState));
+  }, [triviaState]);
 
   const currentQuestion = triviaState.questions[triviaState.currentIndex];
   const isAnswered = triviaState.answers[currentQuestion.id];
@@ -90,6 +146,15 @@ export default function TriviaPage() {
         currentIndex: prev.currentIndex + 1
       }));
       setShowExplanation(false);
+    } else {
+      // Mark quiz as completed when finishing the last question
+      const allAnswered = Object.keys(triviaState.submitted).length === triviaState.questions.length;
+      if (allAnswered) {
+        setTriviaState(prev => ({
+          ...prev,
+          completedAt: new Date().toISOString()
+        }));
+      }
     }
   };
 
@@ -104,12 +169,15 @@ export default function TriviaPage() {
   };
 
   const restart = () => {
+    if (isLocked) return; // Don't allow restart if locked
+    
     setTriviaState({
       currentIndex: 0,
       answers: {},
       submitted: {},
       score: 0,
-      questions: getRandomQuestions(5)
+      questions: getRandomQuestions(5),
+      completedAt: null
     });
     setShowExplanation(false);
   };
@@ -119,13 +187,40 @@ export default function TriviaPage() {
     ...players
   ];
 
+  // Check if all questions are answered
+  const allQuestionsAnswered = Object.keys(triviaState.submitted).length === triviaState.questions.length;
+  const showLockMessage = isLocked || (allQuestionsAnswered && triviaState.completedAt);
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Lock Message */}
+      {showLockMessage && (
+        <div className="mb-6 racing-card p-6 text-center border-2 border-primary/50">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+              <Clock className="w-8 h-8 text-primary" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Quiz Locked for 24 Hours</h2>
+          <p className="text-muted-foreground mb-2">
+            You've completed today's trivia! Come back tomorrow at UTC midnight for a new quiz.
+          </p>
+          {timeUntilUnlock && (
+            <p className="text-sm text-primary font-semibold">
+              Unlocks in: {timeUntilUnlock}
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground mt-4">
+            Your score: <span className="text-primary font-semibold">{triviaState.score} AMF1</span>
+          </p>
+        </div>
+      )}
+
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="racing-title text-4xl">Green-Light Trivia</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Test your racing knowledge</p>
+          <p className="mt-1 text-sm text-muted-foreground">Test your racing knowledge - Daily Quiz</p>
         </div>
         <div className="text-right">
           <div className="text-sm text-muted-foreground" id="question-progress">
@@ -151,7 +246,10 @@ export default function TriviaPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quiz Card */}
         <div className="lg:col-span-2">
-          <div className="racing-card p-6">
+          <div className={cn(
+            "racing-card p-6",
+            isLocked && "opacity-50 pointer-events-none"
+          )}>
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="inline-block bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-medium">
@@ -228,7 +326,11 @@ export default function TriviaPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={restart}
-                className="racing-button-secondary px-4 py-2"
+                disabled={isLocked}
+                className={cn(
+                  "racing-button-secondary px-4 py-2",
+                  isLocked && "opacity-50 cursor-not-allowed"
+                )}
               >
                 Restart
               </button>

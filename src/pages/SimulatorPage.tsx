@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SimulatorConfig, calculateLapTime, formatLapTime, SIMULATOR_CIRCUITS } from '@/data/simulatorData';
 import Leaderboard from '@/components/Leaderboard';
 import AvatarTTS from '@/components/AvatarTTS';
-import CircuitVisualization from '@/components/CircuitVisualization';
+import CircuitImage from '@/components/CircuitImage';
 import AdvancedSimulatorPanel from '@/components/AdvancedSimulatorPanel';
 import RaceWeekSimulator from '@/components/RaceWeekSimulator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -308,7 +308,7 @@ export default function SimulatorPage() {
           />
         </div>
 
-        {/* Circuit Visualization */}
+        {/* Circuit Image */}
         <div className="lg:col-span-2">
           <div className="racing-card p-4 mb-6">
             <div className="flex items-center justify-between mb-4">
@@ -318,11 +318,31 @@ export default function SimulatorPage() {
               </div>
             </div>
             
-            <div className="h-80">
-              <CircuitVisualization 
+            <div className="h-80 bg-secondary/20 rounded-lg p-4">
+              <CircuitImage 
                 circuitId={selectedCircuit.id}
-                isRunning={isRunning}
               />
+            </div>
+            
+            <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-center">
+              <div>
+                <div className="font-semibold text-primary">
+                  {Math.round(selectedCircuit.characteristics.straight_speed_importance * 100)}%
+                </div>
+                <div className="text-muted-foreground">Speed Importance</div>
+              </div>
+              <div>
+                <div className="font-semibold text-accent">
+                  {Math.round(selectedCircuit.characteristics.cornering_importance * 100)}%
+                </div>
+                <div className="text-muted-foreground">Cornering Importance</div>
+              </div>
+              <div>
+                <div className="font-semibold text-racing-blue">
+                  {Math.round(selectedCircuit.characteristics.tire_wear_factor * 100)}%
+                </div>
+                <div className="text-muted-foreground">Tire Wear Factor</div>
+              </div>
             </div>
           </div>
 
