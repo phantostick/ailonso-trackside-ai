@@ -13,10 +13,10 @@ export default function HomePage() {
               Ask Alonso
             </h1>
             <p className="racing-subtitle text-xl md:text-2xl mb-2">
-              Your Personal F1 Racing AI Coach
+              Your Personal F1 Racing Coach
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Experience Formula 1 like never before. Ask Fernando anything, test your knowledge, 
+              Experience Formula 1 like never before. Ask Alonso anything, test your knowledge, 
               simulate race strategies, and customize your AMF1 gear.
             </p>
           </div>
