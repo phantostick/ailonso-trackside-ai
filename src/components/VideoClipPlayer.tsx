@@ -185,8 +185,8 @@ export default function VideoClipPlayer({ className }: VideoClipPlayerProps) {
       {/* Edited Clips Section - Shows after text input */}
       {showEditedClips && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h4 className="font-semibold mb-4">✨ AI-Edited Clips (Ready to Share)</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h4 className="font-semibold mb-4">✨ AI-Edited Clip (Ready to Share)</h4>
+          <div className="max-w-md mx-auto">
             <div className="racing-card p-4">
               <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg mb-3 flex items-center justify-center">
                 <video 
@@ -200,7 +200,7 @@ export default function VideoClipPlayer({ className }: VideoClipPlayerProps) {
                 />
                 <div className="hidden text-4xl">✂️</div>
               </div>
-              <p className="text-sm font-medium text-center mb-2">Edited Clip 1</p>
+              <p className="text-sm font-medium text-center mb-2">AI-Edited Highlight</p>
               <div className="flex gap-2">
                 <Button 
                   onClick={() => handleShare('TikTok', 'Edit 1')}
@@ -216,37 +216,12 @@ export default function VideoClipPlayer({ className }: VideoClipPlayerProps) {
                 >
                   📸 Instagram
                 </Button>
-              </div>
-            </div>
-
-            <div className="racing-card p-4">
-              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg mb-3 flex items-center justify-center">
-                <video 
-                  src="/videos/amf1_edit2.mp4" 
-                  controls 
-                  className="w-full h-full rounded-lg"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <div className="hidden text-4xl">✂️</div>
-              </div>
-              <p className="text-sm font-medium text-center mb-2">Edited Clip 2</p>
-              <div className="flex gap-2">
                 <Button 
-                  onClick={() => handleShare('TikTok', 'Edit 2')}
+                  onClick={() => handleShare('Stories', 'Edit 1')}
                   className="racing-button-primary text-xs flex-1"
                   size="sm"
                 >
-                  📱 TikTok
-                </Button>
-                <Button 
-                  onClick={() => handleShare('Instagram', 'Edit 2')}
-                  className="racing-button-primary text-xs flex-1"
-                  size="sm"
-                >
-                  📸 Instagram
+                  📖 Stories
                 </Button>
               </div>
             </div>
