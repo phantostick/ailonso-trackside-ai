@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import MockTTS from '@/components/MockTTS';
+import VideoClipPlayer from '@/components/VideoClipPlayer';
 
 interface RaceClip {
   id: string;
@@ -165,9 +164,9 @@ export default function CliPITPage() {
         </div>
       </div>
 
-      {/* TTS Assistant */}
+      {/* Video Clip Player with Voice Recording */}
       <div className="mb-6">
-        <MockTTS onHighlightRequest={(request) => console.log('Highlight request:', request)} />
+        <VideoClipPlayer />
       </div>
 
       {/* Filters */}
