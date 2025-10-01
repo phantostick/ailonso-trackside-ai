@@ -125,7 +125,7 @@ export default function SimulatorPage() {
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Advanced F1 setup tool with real-time lap time calculations, car configuration, and Fernando's AI coaching.
+                  Advanced F1 setup tool with real-time lap time calculations, car configuration, and Alonso's coaching.
                 </p>
                 
                 <div className="space-y-2">
@@ -180,7 +180,7 @@ export default function SimulatorPage() {
                 {isRaceWeek ? (
                   <>
                     <p className="text-muted-foreground">
-                      Predict Fernando's best qualifying lap time and compete with other fans for AMF1 points!
+                      Predict Alonso's best qualifying lap time and compete with other fans for AMF1 points!
                     </p>
 
                     <div className="bg-racing-amber/10 rounded-lg p-4 space-y-2">
@@ -253,7 +253,7 @@ export default function SimulatorPage() {
                 <p className="text-sm text-muted-foreground">
                   Whether you're honing your setup skills or competing with the community during live race weekends, 
                   our simulators bring you closer to the action. Earn AMF1 points, climb leaderboards, and get 
-                  real-time coaching from Fernando Alonso's AI.
+                  real-time coaching from Alonso's.
                 </p>
               </CardContent>
             </Card>
@@ -405,7 +405,7 @@ export default function SimulatorPage() {
               </div>
 
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
-                <p className="text-sm font-medium">🗣️ Fernando: "{currentResult.commentary}"</p>
+                <p className="text-sm font-medium">🗣️ Alonso: "{currentResult.commentary}"</p>
               </div>
             </div>
           )}
@@ -415,7 +415,7 @@ export default function SimulatorPage() {
         <div className="space-y-6">
           <div className="racing-card p-4">
             <div className="text-center mb-4">
-              <h3 className="font-semibold mb-2">Fernando's AI Coach</h3>
+              <h3 className="font-semibold mb-2">Alonso's AI Coach</h3>
             </div>
             
             <MockTTS 
