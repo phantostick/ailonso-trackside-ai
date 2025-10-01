@@ -1,7 +1,6 @@
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import gsap from 'gsap';
 
 interface LayoutProps {
   children: ReactNode;
@@ -18,65 +17,11 @@ const navigationItems = [
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const navLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
-
-  useEffect(() => {
-    // GSAP hover animations for nav links
-    navLinksRef.current.forEach((link) => {
-      if (!link) return;
-      
-      const handleMouseEnter = () => {
-        gsap.to(link, {
-          scale: 1.05,
-          boxShadow: '0 0 20px rgba(10, 185, 139, 0.5)',
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(link, {
-          scale: 1,
-          boxShadow: '0 0 0px rgba(10, 185, 139, 0)',
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      };
-
-      const handleClick = () => {
-        gsap.fromTo(link,
-          { scale: 0.95 },
-          { scale: 1.05, duration: 0.2, ease: 'power2.out' }
-        );
-      };
-
-      link.addEventListener('mouseenter', handleMouseEnter);
-      link.addEventListener('mouseleave', handleMouseLeave);
-      link.addEventListener('click', handleClick);
-
-      return () => {
-        link.removeEventListener('mouseenter', handleMouseEnter);
-        link.removeEventListener('mouseleave', handleMouseLeave);
-        link.removeEventListener('click', handleClick);
-      };
-    });
-  }, []);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
-        className="fixed inset-0 z-0 opacity-20"
-        style={{
-          backgroundImage: 'url(/images/amf1-background.jpeg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-background/95 via-background/90 to-background/95" />
+    <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
-      <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md relative">
+      <nav className="bg-card border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* AMF1 Logo */}
           <div className="flex items-center space-x-3">
@@ -86,17 +31,16 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-1">
-            {navigationItems.map((item, index) => (
+            {navigationItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                ref={(el) => (navLinksRef.current[index] = el)}
                 className={({ isActive }) =>
                   cn(
-                    "px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200",
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                     "hover:bg-secondary/80 hover:text-foreground",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/50"
+                      ? "bg-primary text-primary-foreground shadow-lg"
                       : "text-muted-foreground"
                   )
                 }
@@ -115,12 +59,12 @@ export default function Layout({ children }: LayoutProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 relative z-10">
+      <main className="flex-1">
         {children}
       </main>
 
       {/* Footer */}
-      <footer className="bg-card/80 border-t border-border py-8 mt-16 backdrop-blur-md relative z-10">
+      <footer className="bg-card border-t border-border py-8 mt-16">
         <div className="max-w-7xl mx-auto px-8 text-center">
           <div className="racing-title text-xl mb-2">AMF1 • Ask Alonso</div>
           <p className="text-muted-foreground text-sm">

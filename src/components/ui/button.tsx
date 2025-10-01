@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import gsap from "gsap";
 
 import { cn } from "@/lib/utils";
 
@@ -40,50 +39,7 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    const internalRef = React.useRef<HTMLButtonElement>(null);
-    const buttonRef = (ref as React.RefObject<HTMLButtonElement>) || internalRef;
-
-    React.useEffect(() => {
-      const element = buttonRef.current;
-      if (!element) return;
-
-      const handleMouseEnter = () => {
-        gsap.to(element, {
-          scale: 1.05,
-          boxShadow: '0 0 15px rgba(10, 185, 139, 0.4)',
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(element, {
-          scale: 1,
-          boxShadow: '0 0 0px rgba(10, 185, 139, 0)',
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      };
-
-      const handleClick = () => {
-        gsap.fromTo(element,
-          { scale: 0.95 },
-          { scale: 1.05, duration: 0.2, ease: 'back.out(1.7)' }
-        );
-      };
-
-      element.addEventListener('mouseenter', handleMouseEnter);
-      element.addEventListener('mouseleave', handleMouseLeave);
-      element.addEventListener('click', handleClick);
-
-      return () => {
-        element.removeEventListener('mouseenter', handleMouseEnter);
-        element.removeEventListener('mouseleave', handleMouseLeave);
-        element.removeEventListener('click', handleClick);
-      };
-    }, [buttonRef]);
-
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={buttonRef} {...props} />;
+    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
   },
 );
 Button.displayName = "Button";

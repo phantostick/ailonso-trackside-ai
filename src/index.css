@@ -6,36 +6,36 @@
 
 @layer base {
   :root {
-    /* Dark Mode - Aston Martin Racing Theme */
-    --background: 200 20% 8%; /* Dark background with slight blue tint */
-    --foreground: 0 0% 95%; /* Light text */
+    /* Aston Martin Core Colors */
+    --background: 0 0% 100%; /* Complete white background */
+    --foreground: 220 13% 9%; /* Dark text */
 
-    --card: 200 15% 12%; /* Dark cards with transparency */
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 98%; /* Light cards */
+    --card-foreground: 220 13% 9%;
 
-    --popover: 200 20% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 9%;
 
     /* Aston Martin Brand Colors */
-    --primary: 162 88% 35%; /* Bright Aston Martin Racing Green */
-    --primary-foreground: 200 20% 8%;
-    --primary-glow: 162 100% 45%; /* Neon green for effects */
+    --primary: 162 88% 26%; /* Aston Martin Racing Green #0A7968 */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 162 88% 35%; /* Brighter green for effects */
 
-    --secondary: 200 15% 18%; /* Dark secondary */
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 220 13% 96%; /* Light secondary */
+    --secondary-foreground: 220 13% 9%;
 
-    --muted: 200 15% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 40%;
 
-    --accent: 162 88% 25%; /* Green accent */
-    --accent-foreground: 0 0% 95%;
+    --accent: 220 13% 92%; /* Light accent */
+    --accent-foreground: 220 13% 9%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 200 15% 20%;
-    --input: 200 15% 15%;
-    --ring: 162 88% 35%;
+    --border: 220 13% 88%;
+    --input: 0 0% 98%;
+    --ring: 162 88% 26%;
 
     /* Racing-specific colors */
     --racing-red: 0 84% 60%;
@@ -69,14 +69,31 @@
 
     --radius: 0.75rem;
 
-    --sidebar-background: 200 15% 12%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 162 88% 35%;
-    --sidebar-primary-foreground: 200 20% 8%;
-    --sidebar-accent: 200 15% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 200 15% 20%;
-    --sidebar-ring: 162 88% 35%;
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Light mode override (AMF1 stays dark-themed by default) */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 13% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 9%;
+    --border: 220 13% 88%;
+    --input: 220 13% 92%;
   }
 }
 
