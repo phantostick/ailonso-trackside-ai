@@ -115,13 +115,13 @@ export default function SimulatorPage() {
           {/* Simulator Options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* Normal Simulator */}
+            {/* Race Simulator */}
             <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/50">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/30 transition-colors">
                   <Settings className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Normal Simulator</CardTitle>
+                <CardTitle className="text-2xl">Race Simulator</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
