@@ -152,7 +152,7 @@ export default function SimulatorPage() {
                   className="w-full mt-6"
                   size="lg"
                 >
-                  Enter Normal Simulator
+                  Enter Race Simulator
                 </Button>
               </CardContent>
             </Card>
