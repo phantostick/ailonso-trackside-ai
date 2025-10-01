@@ -97,7 +97,7 @@ export default function MerchPage() {
   const getColorPreview = (color: string) => {
     switch (color) {
       case 'green': return 'hsl(var(--primary))';
-      case 'yellow': return 'hsl(var(--accent))';
+      case 'yellow': return '#ffff00';
       case 'black': return '#000000';
       case 'white': return '#ffffff';
       default: return 'hsl(var(--primary))';
