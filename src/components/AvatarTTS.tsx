@@ -102,34 +102,27 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
   return (
     <div className={cn("flex flex-col items-center space-y-6", className)}>
-      {/* Alonso Avatar */}
-<div className="relative">
-  <div
-    className={cn(
-      "w-32 h-32 rounded-full overflow-hidden border-4 border-primary shadow-lg cursor-pointer transition-all duration-300",
-      isSpeaking && "animate-racing-pulse",
-      isListening && "ring-4 ring-primary/50 animate-pulse"
-    )}
-  >
-    <img
-      src="/videos/WhatsApp Image 2025-10-02 at 20.14.20.jpeg"
-      alt="Fernando Alonso Avatar"
-      className="w-full h-full object-cover"
-    />
-  </div>
-
-  {/* Status Indicator */}
-  <div
-    className={cn(
-      "absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-4 border-background",
-      "flex items-center justify-center text-xs font-bold",
-      isSpeaking ? "bg-racing-red animate-pulse" : 
-      isListening ? "bg-accent animate-pulse" : "bg-primary"
-    )}
-  >
-    {isSpeaking ? "🔊" : isListening ? "🎤" : "🏎️"}
-  </div>
-</div>
+     <div className="relative">
+        <div className={cn(
+          "w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent",
+          "flex items-center justify-center text-4xl font-bold text-white",
+          "transition-all duration-300 cursor-pointer racing-glow",
+          isSpeaking && "animate-racing-pulse",
+          isListening && "ring-4 ring-primary/50 animate-pulse"
+        )}>
+          FA
+        </div>
+        
+        {/* Status Indicator */}
+        <div className={cn(
+          "absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-4 border-background",
+          "flex items-center justify-center text-xs font-bold",
+          isSpeaking ? "bg-racing-red animate-pulse" : 
+          isListening ? "bg-accent animate-pulse" : "bg-primary"
+        )}>
+          {isSpeaking ? "🔊" : isListening ? "🎤" : "🏎️"}
+        </div>
+      </div>
 
 
       {/* Interaction Buttons */}
