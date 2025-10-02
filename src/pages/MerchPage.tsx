@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, ShoppingCart, Star, Heart, X, Palette, Upload, Type, Save, Box } from 'lucide-react';
 import Product3DViewer from '@/components/Product3DViewerWithGLTF';
+import alonsoImage from '@/assets/alonso-placeholder.jpeg';
 
 interface MerchItem {
   id: string;
@@ -427,9 +428,21 @@ export default function MerchPage() {
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex gap-6 p-6">
+      {/* Sidebar with Alonso Image */}
+      <div className="hidden lg:block w-64 flex-shrink-0">
+        <div className="sticky top-24">
+          <img 
+            src={alonsoImage} 
+            alt="Fernando Alonso" 
+            className="w-full rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+
+      <div className="flex-1">
       {/* Header */}
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50 -mx-6 px-6">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -1458,6 +1471,7 @@ export default function MerchPage() {
           )}
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }

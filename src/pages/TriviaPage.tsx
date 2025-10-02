@@ -3,6 +3,7 @@ import { getRandomQuestions, TriviaQuestion } from '@/data/triviaQuestions';
 import Leaderboard from '@/components/Leaderboard';
 import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
+import alonsoImage from '@/assets/alonso-placeholder.jpeg';
 
 interface TriviaState {
   currentIndex: number;
@@ -203,7 +204,19 @@ export default function TriviaPage() {
   const showLockMessage = isLocked || (allQuestionsAnswered && triviaState.completedAt);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
+    <div className="max-w-6xl mx-auto px-6 py-8 flex gap-6">
+      {/* Sidebar with Alonso Image */}
+      <div className="hidden lg:block w-64 flex-shrink-0">
+        <div className="sticky top-24">
+          <img 
+            src={alonsoImage} 
+            alt="Fernando Alonso" 
+            className="w-full rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+
+      <div className="flex-1">
       {/* Lock Message */}
       {showLockMessage && (
         <div className="mb-6 racing-card p-6 text-center border-2 border-primary/50">
@@ -213,15 +226,15 @@ export default function TriviaPage() {
             </div>
           </div>
           <h2 className="text-2xl font-bold mb-2">Quiz Completed!</h2>
-          <p className="text-muted-foreground mb-2">
-            You can take the next quiz in:
-          </p>
+            <p className="text-white/80 mb-2">
+              You can take the next quiz in:
+            </p>
           {timeUntilUnlock && (
             <p className="text-3xl font-bold text-primary mb-4">
               {timeUntilUnlock}
             </p>
           )}
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-sm text-white/70 mt-4">
             Your score: <span className="text-primary font-semibold">{triviaState.score} AMF1</span>
           </p>
         </div>
@@ -231,10 +244,10 @@ export default function TriviaPage() {
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="racing-title text-4xl">Green-Light Trivia</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Test your racing knowledge - Daily Quiz</p>
+          <p className="mt-1 text-sm text-white/80">Test your racing knowledge - Daily Quiz</p>
         </div>
         <div className="text-right">
-          <div className="text-sm text-muted-foreground" id="question-progress">
+          <div className="text-sm text-white/80" id="question-progress">
             Q{triviaState.currentIndex + 1} / {triviaState.questions.length}
           </div>
           <div className="mt-2 inline-flex items-center gap-3 racing-card px-3 py-2">
@@ -266,11 +279,11 @@ export default function TriviaPage() {
                 <div className="inline-block bg-accent text-accent-foreground text-xs px-3 py-1 rounded-full font-medium">
                   {currentQuestion.category}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">
+                <div className="text-sm text-white/70 mt-1">
                   Question {triviaState.currentIndex + 1}
                 </div>
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-white/70">
                 {isSubmitted ? (
                   triviaState.answers[currentQuestion.id] === currentQuestion.correct ? (
                     <span className="text-primary font-semibold">✓ Correct</span>
@@ -384,7 +397,7 @@ export default function TriviaPage() {
               </div>
             </div>
 
-            <div className="mt-4 text-xs text-muted-foreground">
+            <div className="mt-4 text-xs text-white/70">
               Each correct answer awards {SCORE_PER_CORRECT} AMF1 point(s).
             </div>
           </div>
@@ -398,19 +411,20 @@ export default function TriviaPage() {
             <h4 className="racing-subtitle mb-3">Quick Stats</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Answered:</span>
+                <span className="text-white/70">Answered:</span>
                 <span className="font-semibold">
                   {Object.keys(triviaState.submitted).length} / {triviaState.questions.length}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">AMF1 Score:</span>
+                <span className="text-white/70">AMF1 Score:</span>
                 <span className="font-semibold text-primary">{triviaState.score}</span>
               </div>
             </div>
           </div>
         </aside>
       </div>
+    </div>
     </div>
   );
 }
