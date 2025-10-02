@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
           backgroundRepeat: 'no-repeat',
         }}
       />
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-background/95 via-background/90 to-background/95" />
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-background/50 via-background/40 to-background/50" />
       {/* Navigation Bar */}
       <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md relative">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
