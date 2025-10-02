@@ -8,7 +8,6 @@ import RaceWeekSimulator from '@/components/RaceWeekSimulator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import alonsoImage from '@/assets/alonso-placeholder.jpeg';
 import { Settings, Trophy, Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -104,19 +103,8 @@ export default function SimulatorPage() {
   // Show selection screen
   if (mode === 'selection') {
     return (
-      <div className="min-h-screen p-8 flex gap-6">
-        {/* Sidebar with Alonso Image */}
-        <div className="hidden lg:block w-64 flex-shrink-0">
-          <div className="sticky top-24">
-            <img 
-              src={alonsoImage} 
-              alt="Fernando Alonso" 
-              className="w-full rounded-lg shadow-lg"
-            />
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto flex-1">
+      <div className="min-h-screen p-8">
+        <div className="max-w-4xl mx-auto">
           
           {/* Header */}
           <div className="text-center mb-12">
