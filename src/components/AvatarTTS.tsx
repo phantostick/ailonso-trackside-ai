@@ -19,6 +19,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   const location = useLocation();
   const recognition = useRef<SpeechRecognition | null>(null);
   const restartTimeoutRef = useRef<number | null>(null);
+  const processedRef = useRef(false);
+  const isSpeakingRef = useRef(false);
 
   // Check if we're on the home page
   const isHomePage = location.pathname === '/';
@@ -148,10 +150,23 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   }, [isInitialized]);
 
   const handleUserInput = useCallback((message: string) => {
+    // Prevent processing if already speaking or if this message was already processed
+    if (isSpeakingRef.current) return;
+
     const { route } = detectCommand(message);
     if (route) {
+      // Stop recognition before speaking
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+      setIsListening(false);
       speakAndNavigate(route);
     } else {
+      // Stop recognition before speaking
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+      setIsListening(false);
       handleAlonsoResponse(message);
     }
   }, [detectCommand, speakAndNavigate]);
@@ -199,6 +214,10 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     }
   }, [isInitialized, startContinuousListening]);
 
+  useEffect(() => {
+    isSpeakingRef.current = isSpeaking;
+  }, [isSpeaking]);
+
   const alonsosKnowledge = {
     greeting: ["¡Hola! I'm Fernando Alonso, ready to help you with racing!", "Welcome to AMF1! What would you like to know?"],
     racing: ["Racing is about precision, patience, and passion. Every millisecond counts!", "The key is finding the perfect balance between speed and control."],
@@ -234,7 +253,15 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     if (!('speechSynthesis' in window)) return;
 
     clearPendingRestart();
+
+    // Stop any ongoing recognition
+    if (recognition.current) {
+      recognition.current.stop();
+    }
+    setIsListening(false);
+
     setIsSpeaking(true);
+    isSpeakingRef.current = true;
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9;
@@ -243,16 +270,26 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
     utterance.onend = () => {
       setIsSpeaking(false);
+      isSpeakingRef.current = false;
+
       if (!isGreeting) {
         // Restart listening after response
-        setTimeout(() => startContinuousListening(), 500);
+        clearPendingRestart();
+        restartTimeoutRef.current = window.setTimeout(() => {
+          startContinuousListening();
+        }, 800); // Slightly longer delay to prevent immediate re-triggering
       }
     };
 
     utterance.onerror = () => {
       setIsSpeaking(false);
+      isSpeakingRef.current = false;
+
       if (!isGreeting) {
-        setTimeout(() => startContinuousListening(), 500);
+        clearPendingRestart();
+        restartTimeoutRef.current = window.setTimeout(() => {
+          startContinuousListening();
+        }, 800);
       }
     };
 
