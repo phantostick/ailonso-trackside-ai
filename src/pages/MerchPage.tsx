@@ -212,15 +212,17 @@ const MERCH_ITEMS: MerchItem[] = [
 ];
 
 // Helper function to determine 3D model type from product
-const getProductType = (product: MerchItem): 'tshirt' | 'hoodie' | 'cap' | 'jacket' | 'other' => {
+const getProductType = (product: MerchItem): 'tshirt' | 'hoodie' | 'cap' | 'jacket' | 'helmet' | 'car' | 'other' => {
   const name = product.name.toLowerCase();
   const category = product.subcategory.toLowerCase();
-  
+
   if (name.includes('t-shirt') || name.includes('tee')) return 'tshirt';
   if (name.includes('hoodie') || name.includes('sweatshirt')) return 'hoodie';
   if (name.includes('cap') || name.includes('hat') || category.includes('headwear')) return 'cap';
   if (name.includes('jacket') || name.includes('windbreaker')) return 'jacket';
-  
+  if (name.includes('helmet')) return 'helmet';
+  if (name.includes('lego') || name.includes('car') || name.includes('diecast')) return 'car';
+
   return 'other';
 };
 

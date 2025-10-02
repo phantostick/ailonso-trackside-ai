@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 3D Models (large binary assets) - keep them out of Git
+src/assets/3d_models/**/*.glb
+src/assets/3d_models/**/*.gltf
+src/assets/3d_models/**/*.bin
+# Allow a placeholder or documentation file if needed
+!src/assets/3d_models/README.md
