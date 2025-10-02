@@ -55,7 +55,7 @@ export default function UserProfilePage() {
   const triviaAccuracy = Math.round((mockUser.stats.triviaCorrect / mockUser.stats.triviaAnswered) * 100);
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Profile Header */}

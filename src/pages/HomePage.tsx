@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 px-8">
         <div className="max-w-4xl mx-auto text-center">

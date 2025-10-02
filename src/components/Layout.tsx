@@ -63,10 +63,10 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Image with Overlay */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Image */}
       <div 
-        className="fixed inset-0 z-0 opacity-20"
+        className="fixed inset-0 z-0 opacity-60"
         style={{
           backgroundImage: 'url(/images/amf1-background.jpeg)',
           backgroundSize: 'cover',
@@ -74,7 +74,6 @@ export default function Layout({ children }: LayoutProps) {
           backgroundRepeat: 'no-repeat',
         }}
       />
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-background/95 via-background/90 to-background/95" />
       {/* Navigation Bar */}
       <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md relative">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
