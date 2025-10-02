@@ -10,9 +10,7 @@ interface AvatarTTSProps {
 export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [userMessage, setUserMessage] = useState('');
   const [alonsosResponse, setAlonsosResponse] = useState('');
-  const [showChat, setShowChat] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const navigate = useNavigate();
@@ -120,7 +118,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
         }
 
         if (finalTranscript) {
-          setUserMessage(finalTranscript);
           handleUserInput(finalTranscript);
         }
       };
@@ -353,64 +350,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
             >
               {isListening ? "Listening..." : "🎤 Ask Alonso"}
             </button>
-
-            <button
-              onClick={() => setShowChat(!showChat)}
-              className="racing-button-secondary px-6 py-3"
-            >
-              💬 Type Message
-            </button>
           </div>
 
-          {/* Chat Interface */}
-          {showChat && (
-            <div className="w-full max-w-2xl racing-card p-6 animate-fade-in-up">
-              <h3 className="racing-subtitle mb-4">Chat with Ai.lonso</h3>
-
-              {/* Messages */}
-              <div className="space-y-4 mb-4">
-                {userMessage && (
-                  <div className="flex justify-end">
-                    <div className="bg-secondary rounded-lg p-3 max-w-xs">
-                      <p className="text-sm">{userMessage}</p>
-                    </div>
-                  </div>
-                )}
-
-                {alonsosResponse && (
-                  <div className="flex justify-start">
-                    <div className="bg-primary/20 rounded-lg p-3 max-w-xs border border-primary/30">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-xs font-bold">
-                          FA
-                        </div>
-                        <span className="text-xs font-semibold text-primary">Ai.lonso</span>
-                      </div>
-                      <p className="text-sm">{alonsosResponse}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Input Form */}
-              <form onSubmit={handleTextSubmit} className="flex space-x-2">
-                <input
-                  type="text"
-                  value={userMessage}
-                  onChange={(e) => setUserMessage(e.target.value)}
-                  placeholder="Ask Fernando anything about racing..."
-                  className="flex-1 racing-select"
-                />
-                <button
-                  type="submit"
-                  disabled={!userMessage.trim() || isSpeaking}
-                  className="racing-button-primary px-4"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
-          )}
         </div>
       ) : (
         /* Other Pages: Floating Avatar at Bottom Right */
@@ -441,56 +382,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
               {isSpeaking ? "🔊" : isListening ? "🎤" : "🏎️"}
             </div>
           </div>
-
-          {/* Chat Interface */}
-          {showChat && (
-            <div className="absolute bottom-24 right-0 w-80 racing-card p-4 shadow-xl animate-fade-in-up">
-              <h3 className="racing-subtitle mb-3 text-sm">Chat with Ai.lonso</h3>
-
-              {/* Messages */}
-              <div className="space-y-3 mb-3 max-h-40 overflow-y-auto">
-                {userMessage && (
-                  <div className="flex justify-end">
-                    <div className="bg-secondary rounded-lg p-2 max-w-xs">
-                      <p className="text-xs">{userMessage}</p>
-                    </div>
-                  </div>
-                )}
-
-                {alonsosResponse && (
-                  <div className="flex justify-start">
-                    <div className="bg-primary/20 rounded-lg p-2 max-w-xs border border-primary/30">
-                      <div className="flex items-center space-x-1 mb-1">
-                        <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center text-xs font-bold">
-                          FA
-                        </div>
-                        <span className="text-xs font-semibold text-primary">Ai.lonso</span>
-                      </div>
-                      <p className="text-xs">{alonsosResponse}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Input Form */}
-              <form onSubmit={handleTextSubmit} className="flex space-x-2">
-                <input
-                  type="text"
-                  value={userMessage}
-                  onChange={(e) => setUserMessage(e.target.value)}
-                  placeholder="Ask Fernando..."
-                  className="flex-1 racing-select text-sm"
-                />
-                <button
-                  type="submit"
-                  disabled={!userMessage.trim() || isSpeaking}
-                  className="racing-button-primary px-3 py-1 text-sm"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
-          )}
         </div>
       )}
     </>
