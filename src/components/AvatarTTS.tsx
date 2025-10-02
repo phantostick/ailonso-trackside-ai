@@ -102,7 +102,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
   return (
     <div className={cn("flex flex-col items-center space-y-6", className)}>
-     <div className="relative">
+      {/* Alonso Avatar */}
+      <div className="relative">
         <div className={cn(
           "w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent",
           "flex items-center justify-center text-4xl font-bold text-white",
@@ -123,7 +124,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           {isSpeaking ? "🔊" : isListening ? "🎤" : "🏎️"}
         </div>
       </div>
-
 
       {/* Interaction Buttons */}
       <div className="flex space-x-4">
