@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Palette, Type, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface VideoClipPlayerProps {
@@ -13,6 +18,12 @@ export default function VideoClipPlayer({ className }: VideoClipPlayerProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
+  
+  // Customization states
+  const [customText, setCustomText] = useState('');
+  const [customHashtag, setCustomHashtag] = useState('#AMF1');
+  const [selectedMusic, setSelectedMusic] = useState('energetic');
+  const [selectedFilter, setSelectedFilter] = useState('racing');
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -148,84 +159,118 @@ export default function VideoClipPlayer({ className }: VideoClipPlayerProps) {
       <div className="mb-8">
         <h4 className="font-semibold mb-4">📹 Available Clips</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="racing-card p-4">
-            <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg mb-3 flex items-center justify-center">
-              <video 
-                src="/videos/amf1_clip1.mp4" 
-                controls 
-                className="w-full h-full rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
+          <Card className="overflow-hidden bg-card/50 border-primary/20">
+            <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-accent/20">
+              <img 
+                src="/images/amf1-thumb1.jpg" 
+                alt="AMF1 Clip 1"
+                className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="hidden text-4xl">🎬</div>
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center group hover:bg-black/20 transition-all">
+                <video 
+                  src="/videos/amf1_clip1.mp4" 
+                  controls 
+                  className="w-full h-full"
+                />
+              </div>
             </div>
-            <p className="text-sm font-medium text-center">Clip 1</p>
-          </div>
+            <CardContent className="p-3">
+              <p className="text-sm font-medium">Race Highlight #1</p>
+            </CardContent>
+          </Card>
 
-          <div className="racing-card p-4">
-            <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg mb-3 flex items-center justify-center">
-              <video 
-                src="/videos/amf1_clip2.mp4" 
-                controls 
-                className="w-full h-full rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
+          <Card className="overflow-hidden bg-card/50 border-primary/20">
+            <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-accent/20">
+              <img 
+                src="/images/amf1-thumb2.jpg" 
+                alt="AMF1 Clip 2"
+                className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="hidden text-4xl">🎬</div>
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center group hover:bg-black/20 transition-all">
+                <video 
+                  src="/videos/amf1_clip2.mp4" 
+                  controls 
+                  className="w-full h-full"
+                />
+              </div>
             </div>
-            <p className="text-sm font-medium text-center">Clip 2</p>
-          </div>
+            <CardContent className="p-3">
+              <p className="text-sm font-medium">Race Highlight #2</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Edited Clips Section - Shows after text input */}
+      {/* Edited Clips Section - Shows after text input with 9:16 ratio */}
       {showEditedClips && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h4 className="font-semibold mb-4">✨ AI-Edited Clip (Ready to Share)</h4>
-          <div className="max-w-md mx-auto">
-            <div className="racing-card p-4">
-              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg mb-3 flex items-center justify-center">
-                <video 
-                  src="/videos/amf1_edit1.mp4" 
-                  controls 
-                  className="w-full h-full rounded-lg"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <div className="hidden text-4xl">✂️</div>
+          <Card className="bg-gradient-to-br from-accent/10 to-primary/10 border-accent/30">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-center gap-2">
+                <Sparkles className="w-5 h-5 text-accent" />
+                AI-Edited Clip (Ready to Share)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="max-w-sm mx-auto">
+                {/* 9:16 Aspect Ratio Container for vertical video */}
+                <div className="relative bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg overflow-hidden mb-4" style={{ aspectRatio: '9/16' }}>
+                  <video 
+                    src="/videos/amf1_edit1.mp4" 
+                    controls 
+                    className="w-full h-full object-cover rounded-lg"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="hidden absolute inset-0 flex items-center justify-center text-6xl">✂️</div>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <p className="text-sm font-medium mb-1">📱 Optimized for Social Media</p>
+                    <p className="text-xs text-muted-foreground">9:16 vertical format • Auto-captioned • Rights-cleared</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button 
+                      onClick={() => handleShare('TikTok', 'Edit 1')}
+                      className="text-xs"
+                      size="sm"
+                      variant="outline"
+                    >
+                      📱 TikTok
+                    </Button>
+                    <Button 
+                      onClick={() => handleShare('Instagram', 'Edit 1')}
+                      className="text-xs"
+                      size="sm"
+                      variant="outline"
+                    >
+                      📸 Reels
+                    </Button>
+                    <Button 
+                      onClick={() => handleShare('Stories', 'Edit 1')}
+                      className="text-xs"
+                      size="sm"
+                      variant="outline"
+                    >
+                      📖 Stories
+                    </Button>
+                  </div>
+                  
+                  <Button 
+                    className="w-full"
+                    onClick={() => toast.success('Downloading your customized clip...')}
+                  >
+                    Download Clip
+                  </Button>
+                </div>
               </div>
-              <p className="text-sm font-medium text-center mb-2">AI-Edited Highlight</p>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => handleShare('TikTok', 'Edit 1')}
-                  className="racing-button-primary text-xs flex-1"
-                  size="sm"
-                >
-                  📱 TikTok
-                </Button>
-                <Button 
-                  onClick={() => handleShare('Instagram', 'Edit 1')}
-                  className="racing-button-primary text-xs flex-1"
-                  size="sm"
-                >
-                  📸 Instagram
-                </Button>
-                <Button 
-                  onClick={() => handleShare('Stories', 'Edit 1')}
-                  className="racing-button-primary text-xs flex-1"
-                  size="sm"
-                >
-                  📖 Stories
-                </Button>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
