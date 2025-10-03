@@ -1,19 +1,26 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+/**
+ * NOTE: FRONTEND API KEY USAGE
+ * You will need to expose your Gemini API key to the browser for this direct-call approach.
+ * This is NOT recommended for production without usage restrictions or a proxy backend.
+ * For development, create a .env file with: VITE_GEMINI_API_KEY=your_key_here
+ * And access it via import.meta.env.VITE_GEMINI_API_KEY
+ */
+
 const MODEL_NAME = 'gemini-1.5-flash'; // or 'gemini-pro'
 
-// 🔑 ElevenLabs API key + Fernando Alonso voice ID
-const ELEVEN_API_KEY = "sk_3ed9d67877691c9c93b6cca151f30b728ed09c607c8a14d6";
-const ALONSO_VOICE_ID = "GLfd7kTn1d1gIbUNmCBV";
-
 interface VoiceAssistantProps {
+  // Optional: allow parent to receive extracted search term
   onSearchCommand?: (query: string) => void;
+  // Optional: provide external setter for UI search bar
   setSearchQuery?: (query: string) => void;
+  // If you want to log or debug externally
   onDebugLog?: (msg: string) => void;
 }
 
@@ -21,47 +28,37 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
   const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
   const [assistantReply, setAssistantReply] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [voiceReady, setVoiceReady] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
 
-  // 🎤 ElevenLabs TTS for Alonso voice
-  const speak = useCallback(async (text: string) => {
-    if (!text) return;
-    try {
-      const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${ALONSO_VOICE_ID}`,
-        {
-          method: "POST",
-          headers: {
-            "xi-api-key": ELEVEN_API_KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text,
-            voice_settings: {
-              stability: 0.4,
-              similarity_boost: 0.9,
-            },
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.error("ElevenLabs TTS error:", await response.text());
-        return;
-      }
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-    } catch (err) {
-      console.error("Error with ElevenLabs TTS:", err);
-    }
+  // Prepare voices
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      // Attempt to pick an English, natural-sounding female/neutral voice
+      const preferred = voices.find(v => /en-US/i.test(v.lang) && /Google US English|Jenny|Aria|Samantha|Lisa/i.test(v.name)) ||
+        voices.find(v => /en/i.test(v.lang));
+      setSelectedVoice(preferred || null);
+      setVoiceReady(true);
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  // Gemini AI client
+  const speak = useCallback((text: string) => {
+    if (!text) return;
+    const utter = new SpeechSynthesisUtterance(text);
+    if (selectedVoice) utter.voice = selectedVoice;
+    utter.rate = 1; // You can tweak rate/pitch
+    utter.pitch = 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  }, [selectedVoice]);
+
+  // Gemini client instance (memoized)
   const genAI = useMemo(() => {
     if (!apiKey) return null;
     try {
@@ -73,6 +70,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
   }, [apiKey]);
 
   const processTranscriptForCommand = useCallback((text: string) => {
+    // Basic command patterns: "search hoodie", "find cap", "look for helmet"
     const pattern = /\b(search|find|look\s+for)\s+([a-zA-Z0-9'-]+)/i;
     const match = text.match(pattern);
     if (match) {
@@ -98,6 +96,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
 
     try {
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+      // Provide system-style guidance in user prompt (since no server side system role)
       const fullPrompt = `You are a helpful Aston Martin F1 merchandise and racing companion. Keep replies concise unless user asks for detail.\nUser said: ${prompt}`;
       const result = await model.generateContent(fullPrompt);
       const response = await result.response;
@@ -124,6 +123,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
 
   const handleStop = useCallback(() => {
     SpeechRecognition.stopListening();
+    // After stopping, process transcript
     if (transcript.trim()) {
       const keyword = processTranscriptForCommand(transcript);
       callGemini(transcript + (keyword ? ` (User intends to search for: ${keyword})` : ''));
@@ -185,7 +185,7 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
             onClick={() => {
               if (assistantReply) speak(assistantReply);
             }}
-            disabled={!assistantReply}
+            disabled={!assistantReply || !voiceReady}
           >
             Replay Voice
           </Button>
