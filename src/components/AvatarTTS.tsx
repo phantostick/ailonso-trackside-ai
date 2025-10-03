@@ -403,8 +403,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
             {/* Status Indicator */}
             <div className={cn(
-              "absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-4 border-background",
-              "flex items-center justify-center text-xs font-bold",
+              "absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full border-4 border-background",
+              "flex items-center justify-center text-xs font-bold shadow-lg",
               isSpeaking ? "bg-racing-red animate-pulse" :
               isListening ? "bg-accent animate-pulse" : "bg-primary"
             )}>
@@ -413,12 +413,12 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           </div>
 
           {/* Interaction Buttons */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 px-4">
             <button
               onClick={startVoiceInput}
               disabled={isListening || isSpeaking}
               className={cn(
-                "racing-button-primary px-6 py-3",
+                "racing-button-primary px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base",
                 (isListening || isSpeaking) && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -428,7 +428,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
         </div>
       ) : (
         /* Other Pages: Floating Avatar at Bottom Right */
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
           {/* Alonso Avatar */}
           <div className="relative">
             {/* Radial Pulse Circles */}
@@ -459,8 +459,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
             {/* Status Indicator */}
             <div className={cn(
-              "absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-background",
-              "flex items-center justify-center text-xs font-bold",
+              "absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-background",
+              "flex items-center justify-center text-xs font-bold shadow-lg",
               isSpeaking ? "bg-racing-red animate-pulse" :
               isListening ? "bg-accent animate-pulse" : "bg-primary"
             )}>

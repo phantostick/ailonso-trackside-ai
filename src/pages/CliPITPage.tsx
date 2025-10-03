@@ -27,12 +27,12 @@ export default function CliPITPage() {
   ];
 
   const categories = [
-    { id: 'all', name: 'All Categories', icon: '🏁' },
+    { id: 'all', name: 'All Categories', icon: '🚦' },
     { id: 'overtake', name: 'Overtakes', icon: '🚗' },
     { id: 'pit-stop', name: 'Pit Stops', icon: '⚡' },
     { id: 'radio', name: 'Team Radio', icon: '📻' },
     { id: 'celebration', name: 'Celebrations', icon: '🎉' },
-    { id: 'podium', name: 'Podium', icon: '🏆' },
+    { id: 'podium', name: 'Podium', icon: '🏁' },
   ];
 
   const aiGeneratedClips: RaceClip[] = [
@@ -91,7 +91,7 @@ export default function CliPITPage() {
       raceEvent: "Canadian Grand Prix 2024",
       aiScore: 90,
       platforms: ['tiktok', 'instagram', 'stories'],
-      thumbnail: "🏆",
+      thumbnail: "🏁",
       category: 'podium',
       downloads: 11200,
       shares: 8300
@@ -122,7 +122,7 @@ export default function CliPITPage() {
 
   const getCategoryIcon = (category: string) => {
     const cat = categories.find(c => c.id === category);
-    return cat?.icon || '🏁';
+    return cat?.icon || '🚦';
   };
 
   const getPlatformIcons = (clipPlatforms: string[]) => {

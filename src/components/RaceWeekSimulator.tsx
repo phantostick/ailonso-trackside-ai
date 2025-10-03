@@ -98,7 +98,7 @@ export default function RaceWeekSimulator({ onBack }: RaceWeekSimulatorProps) {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="racing-title text-4xl mb-2">Race Week Predictor 🏁</h1>
+            <h1 className="racing-title text-4xl mb-2">Race Week Predictor 🏎️</h1>
             <p className="racing-subtitle">Predict Fernando's Best Lap Time & Win AMF1 Points</p>
           </div>
           <Button onClick={onBack} variant="outline">
@@ -297,7 +297,7 @@ export default function RaceWeekSimulator({ onBack }: RaceWeekSimulatorProps) {
                     <span className="font-bold text-racing-gold">{raceWeekData.rewards.winner} AMF1</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">🏆 Top 10</span>
+                    <span className="text-sm">🏁 Top 10</span>
                     <span className="font-bold">{raceWeekData.rewards.top10} AMF1</span>
                   </div>
                   <div className="flex justify-between items-center">
