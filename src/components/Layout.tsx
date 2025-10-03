@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import gsap from 'gsap';
+import AvatarTTS from './AvatarTTS';
 
 interface LayoutProps {
   children: ReactNode;
@@ -66,16 +67,17 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen relative overflow-hidden">
       {/* Background Image */}
       <div 
-        className="fixed inset-0 z-0 opacity-60"
+        className="fixed inset-0 z-0"
         style={{
           backgroundImage: 'url(/images/amf1-background.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
+          filter: 'brightness(30%)',
         }}
       />
       {/* Navigation Bar */}
-      <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md relative">
+      <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* AMF1 Logo */}
           <div className="flex items-center space-x-3">
@@ -127,6 +129,9 @@ export default function Layout({ children }: LayoutProps) {
           </p>
         </div>
       </footer>
+
+      {/* AI Avatar - only on non-home pages */}
+      {location.pathname !== '/' && <AvatarTTS />}
     </div>
   );
 }
