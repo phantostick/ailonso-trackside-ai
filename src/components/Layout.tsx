@@ -80,12 +80,12 @@ export default function Layout({ children }: LayoutProps) {
         }}
       />
       {/* Navigation Bar */}
-      <nav className="bg-card/80 border-b border-border px-8 py-4 sticky top-0 z-50 backdrop-blur-md">
+      <nav className="bg-card/80 border-b border-border px-4 sm:px-8 py-3 sm:py-4 sticky top-0 z-50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* AMF1 Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="racing-title text-2xl font-bold">AMF1</div>
-            <div className="text-accent text-sm font-semibold">Ask Alonso</div>
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="racing-title text-xl sm:text-2xl font-bold">AMF1</div>
+            <div className="text-accent text-xs sm:text-sm font-semibold hidden xs:block">Ask Alonso</div>
           </div>
 
           {/* Navigation Links */}

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
+import alonsoImage from '@/assets/alonso-placeholder.jpeg';
 
 interface AvatarTTSProps {
   onSpeak?: (text: string) => void;
@@ -309,19 +310,22 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           {/* Alonso Avatar */}
           <div className="relative">
             <div className={cn(
-              "w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent",
-              "flex items-center justify-center text-4xl font-bold text-white",
-              "transition-all duration-300 cursor-pointer racing-glow",
-              isSpeaking && "animate-racing-pulse",
+              "w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden",
+              "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
+              isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
               isListening && "ring-4 ring-primary/50 animate-pulse"
             )}>
-              FA
+              <img 
+                src={alonsoImage} 
+                alt="Fernando Alonso" 
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Status Indicator */}
             <div className={cn(
-              "absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-4 border-background",
-              "flex items-center justify-center text-xs font-bold",
+              "absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full border-4 border-background",
+              "flex items-center justify-center text-xs font-bold shadow-lg",
               isSpeaking ? "bg-racing-red animate-pulse" :
               isListening ? "bg-accent animate-pulse" : "bg-primary"
             )}>
@@ -330,12 +334,12 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           </div>
 
           {/* Interaction Buttons */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 px-4">
             <button
               onClick={startListening}
               disabled={isListening || isSpeaking}
               className={cn(
-                "racing-button-primary px-6 py-3",
+                "racing-button-primary px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base",
                 (isListening || isSpeaking) && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -346,27 +350,30 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
         </div>
       ) : (
         /* Other Pages: Floating Avatar at Bottom Right */
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
           {/* Alonso Avatar */}
           <div className="relative">
             <div
               className={cn(
-                "w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent",
-                "flex items-center justify-center text-2xl font-bold text-white",
+                "w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden",
                 "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
                 "hover:scale-110",
-                isSpeaking && "animate-racing-pulse",
+                isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
                 isListening && "ring-4 ring-primary/50 animate-pulse"
               )}
               onClick={startListening}
             >
-              FA
+              <img 
+                src={alonsoImage} 
+                alt="Fernando Alonso" 
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Status Indicator */}
             <div className={cn(
-              "absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-background",
-              "flex items-center justify-center text-xs font-bold",
+              "absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-background",
+              "flex items-center justify-center text-xs font-bold shadow-lg",
               isSpeaking ? "bg-racing-red animate-pulse" :
               isListening ? "bg-accent animate-pulse" : "bg-primary"
             )}>
