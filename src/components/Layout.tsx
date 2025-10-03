@@ -10,9 +10,9 @@ interface LayoutProps {
 
 const navigationItems = [
   { path: '/', label: 'Ask Alonso', icon: '🏎️' },
-  { path: '/trivia', label: 'Green-Light Trivia', icon: '🏁' },
+  { path: '/trivia', label: 'Green-Light Trivia', icon: '🚦' },
   { path: '/clipit', label: 'CliPIT', icon: '📹' },
-  { path: '/simulator', label: 'Racecraft Simulator', icon: '🏆' },
+  { path: '/simulator', label: 'Racecraft Simulator', icon: '🏁' },
   { path: '/merch', label: 'Style Studio', icon: '👕' },
   { path: '/profile', label: 'Profile', icon: '👤' },
 ];

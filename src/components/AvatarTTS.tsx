@@ -243,7 +243,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     const response = getAlonsoResponse(message);
     setAlonsosResponse(response);
     speakText(response);
-    setShowChat(true);
   };
 
   const speakText = (text: string, isGreeting = false) => {
@@ -298,15 +297,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   const startListening = () => {
     if (recognition.current) {
       setIsListening(true);
-      setShowChat(true);
       recognition.current.start();
-    }
-  };
-
-  const handleTextSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userMessage.trim()) {
-      handleAlonsoResponse(userMessage);
     }
   };
 
@@ -367,7 +358,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
                 isSpeaking && "animate-racing-pulse",
                 isListening && "ring-4 ring-primary/50 animate-pulse"
               )}
-              onClick={() => setShowChat(!showChat)}
+              onClick={startListening}
             >
               FA
             </div>

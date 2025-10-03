@@ -30,7 +30,7 @@ export default function HomePage() {
               to="/trivia"
               className="racing-card p-6 hover:scale-105 transition-all duration-300 racing-glow group"
             >
-              <div className="text-4xl mb-3">🏁</div>
+              <div className="text-4xl mb-3">🚦</div>
               <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
                 Green-Light Trivia
               </h3>
@@ -43,7 +43,7 @@ export default function HomePage() {
               to="/simulator"
               className="racing-card p-6 hover:scale-105 transition-all duration-300 racing-glow group"
             >
-              <div className="text-4xl mb-3">🏆</div>
+              <div className="text-4xl mb-3">🏁</div>
               <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
                 Racecraft Simulator
               </h3>

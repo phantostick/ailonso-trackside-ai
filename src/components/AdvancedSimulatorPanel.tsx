@@ -303,7 +303,7 @@ export default function AdvancedSimulatorPanel({
           <div className="racing-card p-4 bg-secondary/50">
             <h4 className="font-semibold mb-2">Recommended Strategy</h4>
             <div className="space-y-2 text-sm">
-              <div>🏁 Start: {config.tires} tires, {config.fuel}% fuel</div>
+              <div>🏎️ Start: {config.tires} tires, {config.fuel}% fuel</div>
               <div>⚡ Engine: {config.engineMode} mode</div>
               <div>🔧 Aero: {config.aero} downforce</div>
             </div>
@@ -325,7 +325,7 @@ export default function AdvancedSimulatorPanel({
             isRunning && "opacity-50 cursor-not-allowed"
           )}
         >
-          {isRunning ? "Running Simulation..." : "🏁 Start Dry Run"}
+          {isRunning ? "Running Simulation..." : "🏁 Start Race"}
         </button>
         <button
           onClick={onResetConfig}

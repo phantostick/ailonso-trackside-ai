@@ -199,7 +199,7 @@ export default function SimulatorPage() {
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-center space-x-2 text-sm">
-                        <span>🏆</span>
+                        <span>🏁</span>
                         <span>Win up to 1000 AMF1 points</span>
                       </div>
                       <div className="flex items-center justify-center space-x-2 text-sm">

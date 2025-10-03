@@ -13,7 +13,7 @@ const mockUser = {
   achievements: [
     { id: 1, name: "Trivia Master", description: "Answered 100 trivia questions correctly", icon: "🧠", earned: "2024-03-15" },
     { id: 2, name: "Speed Demon", description: "Set fastest lap time in simulator", icon: "🏎️", earned: "2024-02-28" },
-    { id: 3, name: "Loyal Fan", description: "5+ years membership", icon: "🏆", earned: "2023-08-12" },
+    { id: 3, name: "Loyal Fan", description: "5+ years membership", icon: "🏁", earned: "2023-08-12" },
     { id: 4, name: "Social Butterfly", description: "Shared 50+ AMF1 moments", icon: "🦋", earned: "2024-01-20" },
     { id: 5, name: "Merchandise Collector", description: "Purchased 10+ items", icon: "👕", earned: "2023-12-10" },
   ],
