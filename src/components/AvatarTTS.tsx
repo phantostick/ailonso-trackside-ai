@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
-import alonsoImage from '@/assets/alonso-placeholder.jpeg';
 
 interface AvatarTTSProps {
   onSpeak?: (text: string) => void;
@@ -310,16 +309,13 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           {/* Alonso Avatar */}
           <div className="relative">
             <div className={cn(
-              "w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden",
+              "w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-primary to-accent",
+              "flex items-center justify-center text-3xl sm:text-4xl font-bold text-white",
               "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
               isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
               isListening && "ring-4 ring-primary/50 animate-pulse"
             )}>
-              <img 
-                src={alonsoImage} 
-                alt="Fernando Alonso" 
-                className="w-full h-full object-cover"
-              />
+              FA
             </div>
 
             {/* Status Indicator */}
@@ -355,7 +351,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           <div className="relative">
             <div
               className={cn(
-                "w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden",
+                "w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary to-accent",
+                "flex items-center justify-center text-xl sm:text-2xl font-bold text-white",
                 "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
                 "hover:scale-110",
                 isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
@@ -363,11 +360,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
               )}
               onClick={startListening}
             >
-              <img 
-                src={alonsoImage} 
-                alt="Fernando Alonso" 
-                className="w-full h-full object-cover"
-              />
+              FA
             </div>
 
             {/* Status Indicator */}
