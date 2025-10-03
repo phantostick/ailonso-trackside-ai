@@ -1,8 +1,10 @@
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import gsap from 'gsap';
 import AvatarTTS from './AvatarTTS';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Menu } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -20,6 +22,7 @@ const navigationItems = [
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // GSAP hover animations for nav links
@@ -108,10 +111,37 @@ export default function Layout({ children }: LayoutProps) {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button className="md:hidden racing-button-secondary">
-            Menu
-          </button>
+          {/* Mobile Menu */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <button className="md:hidden p-2 rounded-lg hover:bg-secondary/80 transition-colors">
+                <Menu className="h-6 w-6 text-foreground" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[280px] bg-card/95 backdrop-blur-md">
+              <nav className="flex flex-col space-y-2 mt-8">
+                {navigationItems.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        "px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200",
+                        "hover:bg-secondary/80 hover:text-foreground",
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/50"
+                          : "text-muted-foreground"
+                      )
+                    }
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </nav>
 
