@@ -80,6 +80,16 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "radial-pulse": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "scale(2)",
+            opacity: "0",
+          },
+        },
         "circuit-flow": {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(100%)" },
@@ -108,6 +118,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "racing-pulse": "racing-pulse 2s ease-in-out infinite",
+        "radial-pulse": "radial-pulse 1.5s ease-out infinite",
         "circuit-flow": "circuit-flow 3s ease-in-out infinite",
         "lap-timer": "lap-timer 1s ease-out",
         "fade-in-up": "fade-in-up 0.3s ease-out",

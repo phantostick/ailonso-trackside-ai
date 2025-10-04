@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
+import alonsoAvatarVideo from '@/assets/avatar_videos/Alonso_ Avatar.mp4';
 
 interface AvatarTTSProps {
   onSpeak?: (text: string) => void;
@@ -19,6 +20,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   const restartTimeoutRef = useRef<number | null>(null);
   const processedRef = useRef(false);
   const isSpeakingRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Check if we're on the home page
   const isHomePage = location.pathname === '/';
@@ -59,10 +61,10 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     return "Good evening";
   }, []);
 
-  const detectCommand = useCallback((text: string): {route?: string} => {
+  const detectCommand = useCallback((text: string): {route?: string, action?: string, productId?: string, answer?: string} => {
     const lower = text.toLowerCase().trim();
 
-    // Direct keyword matching (most reliable)
+    // Navigation commands (work from any page)
     for (const key of Object.keys(commandRoutes)) {
       if (lower.includes(key)) {
         return { route: commandRoutes[key] };
@@ -71,21 +73,66 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
     // Pattern matching for navigation commands
     const navRegex = /(?:open|go to|show|take me to|navigate to|switch to|load|visit)\s+(?:the\s+)?(.+)/i;
-    const match = lower.match(navRegex);
-    if (match) {
-      const fullMatch = match[0];
-      const target = match[1].toLowerCase().replace(/\s+/g, ' ').trim();
-
-      // Check if the target matches any of our commands
+    const navMatch = lower.match(navRegex);
+    if (navMatch) {
+      const target = navMatch[1].toLowerCase().replace(/\s+/g, ' ').trim();
       for (const key of Object.keys(commandRoutes)) {
-        if (target.includes(key) || fullMatch.includes(key)) {
+        if (target.includes(key) || navMatch[0].includes(key)) {
           return { route: commandRoutes[key] };
         }
       }
     }
 
+    // Page-specific commands based on current location
+    if (location.pathname === '/merch') {
+      // Merch page commands
+      if (lower.includes('add to cart') || lower.includes('buy') || lower.includes('purchase')) {
+        const productPatterns = [
+          /(?:add|buy|purchase|get me)\s+(?:the\s+)?(.+?)(?:\s+to\s+(?:cart|basket)|$)/i,
+          /(?:add|buy|purchase)\s+(.+?)(?:\s+to\s+(?:my\s+)?cart|$)/i
+        ];
+
+        for (const pattern of productPatterns) {
+          const match = lower.match(pattern);
+          if (match) {
+            const productName = match[1].toLowerCase().trim();
+            return { action: 'addToCart', productId: productName };
+          }
+        }
+      }
+    } else if (location.pathname === '/trivia') {
+      // Trivia page commands
+      if (lower.includes('answer') || lower.includes('choose') || lower.includes('select')) {
+        const answerPatterns = [
+          /(?:answer|choose|select)\s+(?:option\s+)?([a-d])/i,
+          /(?:answer|choose|select)\s+(?:number\s+)?([1-4])/i
+        ];
+
+        for (const pattern of answerPatterns) {
+          const match = lower.match(pattern);
+          if (match) {
+            const answer = match[1].toLowerCase();
+            return { action: 'submitAnswer', answer: answer };
+          }
+        }
+      }
+    } else if (location.pathname === '/simulator') {
+      // Simulator page commands
+      if (lower.includes('start') && (lower.includes('race') || lower.includes('simulation'))) {
+        return { action: 'startRace' };
+      }
+      if (lower.includes('reset') || lower.includes('clear')) {
+        return { action: 'resetSimulator' };
+      }
+    } else if (location.pathname === '/clipit') {
+      // CliPIT page commands
+      if (lower.includes('generate') && lower.includes('clip')) {
+        return { action: 'generateClip' };
+      }
+    }
+
     return {};
-  }, []);
+  }, [location.pathname, commandRoutes]);
 
   const speakAndNavigate = useCallback((route: string) => {
     const pageName = Object.keys(commandRoutes).find(key => commandRoutes[key] === route);
@@ -101,8 +148,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognition.current = new SpeechRecognition();
-      recognition.current.continuous = true;
-      recognition.current.interimResults = true;
+      recognition.current.continuous = false;
+      recognition.current.interimResults = false;
       recognition.current.lang = 'en-US';
 
       recognition.current.onstart = () => {
@@ -124,24 +171,11 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
 
       recognition.current.onerror = (event: any) => {
         setIsListening(false);
-        // Auto-restart after error
-        if (event.error !== 'not-allowed') {
-          clearPendingRestart();
-          restartTimeoutRef.current = window.setTimeout(() => {
-            startContinuousListening();
-          }, 1000);
-        }
+        console.error('Speech recognition error:', event.error);
       };
 
       recognition.current.onend = () => {
         setIsListening(false);
-        // Auto-restart if initialized and not speaking
-        if (isInitialized && !isSpeakingRef.current) {
-          clearPendingRestart();
-          restartTimeoutRef.current = window.setTimeout(() => {
-            startContinuousListening();
-          }, 400);
-        }
       };
     }
   }, [isInitialized]);
@@ -150,16 +184,57 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     // Prevent processing if already speaking or if this message was already processed
     if (isSpeakingRef.current) return;
 
-    const { route } = detectCommand(message);
-    if (route) {
-      // Stop recognition before speaking
+    const command = detectCommand(message);
+
+    if (command.route) {
+      // Navigation command
       if (recognition.current) {
         recognition.current.stop();
       }
       setIsListening(false);
-      speakAndNavigate(route);
+      speakAndNavigate(command.route);
+    } else if (command.action) {
+      // Page-specific action
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+      setIsListening(false);
+
+      // Dispatch custom event for page-specific actions
+      const voiceActionEvent = new CustomEvent('voiceAction', {
+        detail: {
+          action: command.action,
+          productId: command.productId,
+          answer: command.answer
+        }
+      });
+      window.dispatchEvent(voiceActionEvent);
+
+      // For addToCart, don't provide immediate feedback - wait for success/failure events
+      if (command.action !== 'addToCart') {
+        // Provide feedback based on action
+        let feedback = '';
+        switch (command.action) {
+          case 'submitAnswer':
+            feedback = `Submitting answer ${command.answer}.`;
+            break;
+          case 'startRace':
+            feedback = 'Starting the race simulation.';
+            break;
+          case 'resetSimulator':
+            feedback = 'Resetting the simulator.';
+            break;
+          case 'generateClip':
+            feedback = 'Generating your video clip.';
+            break;
+          default:
+            feedback = 'Action performed.';
+        }
+
+        speakText(feedback);
+      }
     } else {
-      // Stop recognition before speaking
+      // General response
       if (recognition.current) {
         recognition.current.stop();
       }
@@ -167,24 +242,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
       handleAlonsoResponse(message);
     }
   }, [detectCommand, speakAndNavigate]);
-
-  const startContinuousListening = useCallback(() => {
-    if (!recognition.current || isSpeaking) return;
-
-    clearTimeout(restartTimeoutRef.current!);
-    try {
-      recognition.current.start();
-    } catch (e) {
-      // Already started or other error
-    }
-  }, [isSpeaking]);
-
-  const clearPendingRestart = useCallback(() => {
-    if (restartTimeoutRef.current) {
-      clearTimeout(restartTimeoutRef.current);
-      restartTimeoutRef.current = null;
-    }
-  }, []);
 
   // Initial greeting on component mount
   useEffect(() => {
@@ -202,18 +259,46 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     }
   }, [isInitialized, getTimeBasedGreeting]);
 
-  // Start listening after greeting is complete
-  useEffect(() => {
-    if (isInitialized && recognition.current) {
-      setTimeout(() => {
-        startContinuousListening();
-      }, 500);
-    }
-  }, [isInitialized, startContinuousListening]);
-
   useEffect(() => {
     isSpeakingRef.current = isSpeaking;
   }, [isSpeaking]);
+
+  // Control video playback based on speaking state
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isSpeaking) {
+        videoRef.current.play().catch(console.error);
+      } else {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0; // Reset to beginning when not speaking
+      }
+    }
+  }, [isSpeaking]);
+
+  // Listen for voice action success/failure events
+  useEffect(() => {
+    const handleVoiceActionSuccess = (event: CustomEvent) => {
+      const { action, productName } = event.detail;
+      if (action === 'addToCart' && productName) {
+        speakText(`${productName} has been added to your cart.`);
+      }
+    };
+
+    const handleVoiceActionFailure = (event: CustomEvent) => {
+      const { action, productId } = event.detail;
+      if (action === 'addToCart') {
+        speakText(`Sorry, I couldn't find a product matching "${productId}". Please try again with a different name.`);
+      }
+    };
+
+    window.addEventListener('voiceActionSuccess', handleVoiceActionSuccess as EventListener);
+    window.addEventListener('voiceActionFailure', handleVoiceActionFailure as EventListener);
+
+    return () => {
+      window.removeEventListener('voiceActionSuccess', handleVoiceActionSuccess as EventListener);
+      window.removeEventListener('voiceActionFailure', handleVoiceActionFailure as EventListener);
+    };
+  }, []);
 
   const alonsosKnowledge = {
     greeting: ["¡Hola! I'm Fernando Alonso, ready to help you with racing!", "Welcome to AMF1! What would you like to know?"],
@@ -248,8 +333,6 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
   const speakText = (text: string, isGreeting = false) => {
     if (!('speechSynthesis' in window)) return;
 
-    clearPendingRestart();
-
     // Stop any ongoing recognition
     if (recognition.current) {
       recognition.current.stop();
@@ -267,26 +350,11 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     utterance.onend = () => {
       setIsSpeaking(false);
       isSpeakingRef.current = false;
-
-      if (!isGreeting) {
-        // Restart listening after response
-        clearPendingRestart();
-        restartTimeoutRef.current = window.setTimeout(() => {
-          startContinuousListening();
-        }, 800); // Slightly longer delay to prevent immediate re-triggering
-      }
     };
 
     utterance.onerror = () => {
       setIsSpeaking(false);
       isSpeakingRef.current = false;
-
-      if (!isGreeting) {
-        clearPendingRestart();
-        restartTimeoutRef.current = window.setTimeout(() => {
-          startContinuousListening();
-        }, 800);
-      }
     };
 
     speechSynthesis.cancel();
@@ -294,8 +362,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     onSpeak?.(text);
   };
 
-  const startListening = () => {
-    if (recognition.current) {
+  const startVoiceInput = () => {
+    if (recognition.current && !isListening && !isSpeaking) {
       setIsListening(true);
       recognition.current.start();
     }
@@ -308,15 +376,30 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
         <div className={cn("flex flex-col items-center space-y-6", className)}>
           {/* Alonso Avatar */}
           <div className="relative">
-            <div className={cn(
-              "w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-primary to-accent",
-              "flex items-center justify-center text-3xl sm:text-4xl font-bold text-white",
-              "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
-              isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
-              isListening && "ring-4 ring-primary/50 animate-pulse"
-            )}>
-              FA
-            </div>
+            {/* Radial Pulse Circles */}
+            {(isSpeaking || isListening) && (
+              <>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radial-pulse"></div>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-radial-pulse" style={{ animationDelay: '0.3s' }}></div>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-radial-pulse" style={{ animationDelay: '0.6s' }}></div>
+              </>
+            )}
+            
+            <video
+              ref={videoRef}
+              className={cn(
+                "w-64 h-64 rounded-full object-contain bg-black transform relative z-10",
+                "transition-all duration-300 cursor-pointer racing-glow",
+                isListening && "shazam-pulse"
+              )}
+              onClick={startVoiceInput}
+              muted
+              loop
+              playsInline
+            >
+              <source src={alonsoAvatarVideo} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
 
             {/* Status Indicator */}
             <div className={cn(
@@ -332,7 +415,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
           {/* Interaction Buttons */}
           <div className="flex space-x-4 px-4">
             <button
-              onClick={startListening}
+              onClick={startVoiceInput}
               disabled={isListening || isSpeaking}
               className={cn(
                 "racing-button-primary px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base",
@@ -342,26 +425,37 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
               {isListening ? "Listening..." : "🎤 Ask Alonso"}
             </button>
           </div>
-
         </div>
       ) : (
         /* Other Pages: Floating Avatar at Bottom Right */
         <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
           {/* Alonso Avatar */}
           <div className="relative">
-            <div
+            {/* Radial Pulse Circles */}
+            {(isSpeaking || isListening) && (
+              <>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-radial-pulse"></div>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-radial-pulse" style={{ animationDelay: '0.3s' }}></div>
+                <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-radial-pulse" style={{ animationDelay: '0.6s' }}></div>
+              </>
+            )}
+            
+            <video
+              ref={videoRef}
               className={cn(
-                "w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary to-accent",
-                "flex items-center justify-center text-xl sm:text-2xl font-bold text-white",
+                "w-20 h-20 rounded-full object-contain bg-black transform scale-150 relative z-10",
                 "transition-all duration-300 cursor-pointer racing-glow shadow-lg",
                 "hover:scale-110",
-                isSpeaking && "animate-racing-pulse ring-4 ring-racing-red/50",
-                isListening && "ring-4 ring-primary/50 animate-pulse"
+                isListening && "shazam-pulse"
               )}
-              onClick={startListening}
+              onClick={startVoiceInput}
+              muted
+              loop
+              playsInline
             >
-              FA
-            </div>
+              <source src={alonsoAvatarVideo} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
 
             {/* Status Indicator */}
             <div className={cn(

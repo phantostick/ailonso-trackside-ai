@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -316,6 +316,16 @@ export default function MerchPage() {
     }
   };
 
+  // Helper function to check if a product is in the cart
+  const isProductInCart = (product: MerchItem, size?: string, color?: string, customizationData?: CustomizationData) => {
+    return cart.some(item => 
+      item.id === product.id && 
+      item.selectedSize === size && 
+      item.selectedColor === color &&
+      JSON.stringify(item.customization) === JSON.stringify(customizationData)
+    );
+  };
+
   const openCustomizeModal = (product: MerchItem) => {
     setCustomizeProduct(product);
     setCustomization({
@@ -425,6 +435,59 @@ export default function MerchPage() {
 
   const cartTotal = cart.reduce((total, item) => total + (getItemPrice(item) * item.quantity), 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+  // Voice command handler
+  const handleVoiceAction = (event: CustomEvent) => {
+    const { action, productId } = event.detail;
+
+    if (action === 'addToCart' && productId) {
+      // Improved product matching with fuzzy logic
+      const product = MERCH_ITEMS.find(item => {
+        const itemName = item.name.toLowerCase();
+        const searchTerm = productId.toLowerCase();
+
+        // Exact match
+        if (itemName === searchTerm) return true;
+
+        // Contains match (both ways)
+        if (itemName.includes(searchTerm) || searchTerm.includes(itemName)) return true;
+
+        // Word-based matching - check if all words in search term appear in item name
+        const searchWords = searchTerm.split(' ').filter(word => word.length > 2);
+        const itemWords = itemName.split(' ');
+
+        const matchCount = searchWords.filter(searchWord =>
+          itemWords.some(itemWord => itemWord.toLowerCase().includes(searchWord) || searchWord.includes(itemWord.toLowerCase()))
+        ).length;
+
+        // If 80% of search words match, consider it a match
+        return matchCount >= searchWords.length * 0.8;
+      });
+
+      if (product) {
+        addToCart(product);
+        // Dispatch success feedback event
+        const successEvent = new CustomEvent('voiceActionSuccess', {
+          detail: { action: 'addToCart', productName: product.name }
+        });
+        window.dispatchEvent(successEvent);
+      } else {
+        // Dispatch failure feedback event
+        const failureEvent = new CustomEvent('voiceActionFailure', {
+          detail: { action: 'addToCart', productId }
+        });
+        window.dispatchEvent(failureEvent);
+      }
+    }
+  };
+
+  // Listen for voice actions
+  useEffect(() => {
+    window.addEventListener('voiceAction', handleVoiceAction as EventListener);
+    return () => {
+      window.removeEventListener('voiceAction', handleVoiceAction as EventListener);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -750,7 +813,7 @@ export default function MerchPage() {
                       <div className="flex w-full">
                         <Button
                           className="flex-1"
-                          disabled={!product.inStock}
+                          disabled={!product.inStock || isProductInCart(product)}
                           onClick={() => {
                             setSelectedProduct(product);
                             if (!product.sizes && !product.colors) {
@@ -759,7 +822,7 @@ export default function MerchPage() {
                           }}
                         >
                           <ShoppingCart className="h-4 w-2" />
-                          Add to Cart
+                          {isProductInCart(product) ? 'In Cart' : 'Add to Cart'}
                         </Button>
                         <Button
                           variant="outline"
@@ -853,13 +916,16 @@ export default function MerchPage() {
                 <Button
                   className="w-full"
                   size="lg"
+                  disabled={!selectedProduct?.inStock || (selectedProduct && isProductInCart(selectedProduct))}
                   onClick={() => {
-                    addToCart(selectedProduct);
-                    setSelectedProduct(null);
+                    if (selectedProduct) {
+                      addToCart(selectedProduct);
+                      setSelectedProduct(null);
+                    }
                   }}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart
+                  {selectedProduct && isProductInCart(selectedProduct) ? 'In Cart' : 'Add to Cart'}
                 </Button>
               </div>
             </CardContent>
@@ -1191,10 +1257,11 @@ export default function MerchPage() {
                     </Button>
                     <Button
                       className="flex-1"
+                      disabled={!customizeProduct?.inStock || (customizeProduct && isProductInCart(customizeProduct, customization.selectedSize, customization.selectedColor, { ...customization }))}
                       onClick={addCustomizedToCart}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {customizeProduct && isProductInCart(customizeProduct, customization.selectedSize, customization.selectedColor, { ...customization }) ? 'In Cart' : 'Add to Cart'}
                     </Button>
                   </div>
                 </div>
@@ -1428,6 +1495,7 @@ export default function MerchPage() {
                   </Button>
                   <Button
                     className="flex-1"
+                    disabled={!view3DProduct?.inStock || (view3DProduct && isProductInCart(view3DProduct, customization.selectedSize, customization.selectedColor, { ...customization }))}
                     onClick={() => {
                       if (view3DProduct) {
                         addToCart(
@@ -1450,7 +1518,7 @@ export default function MerchPage() {
                     }}
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
+                    {view3DProduct && isProductInCart(view3DProduct, customization.selectedSize, customization.selectedColor, { ...customization }) ? 'In Cart' : 'Add to Cart'}
                   </Button>
                 </div>
               </div>
