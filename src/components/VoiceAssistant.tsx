@@ -4,7 +4,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { speakWithElevenLabs } from '@/lib/elevenlabs';
 
 /**
  * NOTE: FRONTEND API KEY USAGE
@@ -49,14 +48,15 @@ const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ onSearchCommand, setSea
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  const speak = useCallback(async (text: string) => {
+  const speak = useCallback((text: string) => {
     if (!text) return;
-    try {
-      await speakWithElevenLabs(text);
-    } catch (error) {
-      console.error('Speech error:', error);
-    }
-  }, []);
+    const utter = new SpeechSynthesisUtterance(text);
+    if (selectedVoice) utter.voice = selectedVoice;
+    utter.rate = 1; // You can tweak rate/pitch
+    utter.pitch = 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  }, [selectedVoice]);
 
   // Gemini client instance (memoized)
   const genAI = useMemo(() => {
