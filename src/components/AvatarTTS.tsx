@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import alonsoAvatarVideo from '@/assets/avatar_videos/Alonso_ Avatar.mp4';
+import { speakWithElevenLabs } from '@/lib/elevenlabs';
 
 interface AvatarTTSProps {
   onSpeak?: (text: string) => void;
@@ -330,9 +331,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     speakText(response);
   };
 
-  const speakText = (text: string, isGreeting = false) => {
-    if (!('speechSynthesis' in window)) return;
-
+  const speakText = async (text: string, isGreeting = false) => {
     // Stop any ongoing recognition
     if (recognition.current) {
       recognition.current.stop();
@@ -342,23 +341,15 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
     setIsSpeaking(true);
     isSpeakingRef.current = true;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    utterance.volume = 0.8;
-
-    utterance.onend = () => {
+    try {
+      await speakWithElevenLabs(text);
+    } catch (error) {
+      console.error('Speech error:', error);
+    } finally {
       setIsSpeaking(false);
       isSpeakingRef.current = false;
-    };
+    }
 
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      isSpeakingRef.current = false;
-    };
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(utterance);
     onSpeak?.(text);
   };
 
