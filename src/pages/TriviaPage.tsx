@@ -3,6 +3,7 @@ import { getRandomQuestions, TriviaQuestion } from '@/data/triviaQuestions';
 import Leaderboard from '@/components/Leaderboard';
 import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
+import { speakWithElevenLabs } from '@/lib/elevenlabs';
 
 interface TriviaState {
   currentIndex: number;
@@ -91,13 +92,11 @@ export default function TriviaPage() {
   const isSubmitted = triviaState.submitted[currentQuestion.id];
   const progress = ((triviaState.currentIndex + (isSubmitted ? 1 : 0)) / triviaState.questions.length) * 100;
 
-  const speakText = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 0.8;
-      speechSynthesis.speak(utterance);
+  const speakText = async (text: string) => {
+    try {
+      await speakWithElevenLabs(text);
+    } catch (error) {
+      console.error('Failed to speak text:', error);
     }
   };
 
