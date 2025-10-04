@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import alonsoAvatarVideo from '@/assets/avatar_videos/Alonso_ Avatar.mp4';
+import alonsoAvatarPhoto from '@/assets/avatar_photo.jpg';
 
 interface AvatarTTSProps {
   onSpeak?: (text: string) => void;
@@ -270,7 +271,8 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
         videoRef.current.play().catch(console.error);
       } else {
         videoRef.current.pause();
-        videoRef.current.currentTime = 0; // Reset to beginning when not speaking
+        videoRef.current.currentTime = 0; // Reset to beginning
+        videoRef.current.load(); // Reload video to show poster image
       }
     }
   }, [isSpeaking]);
@@ -393,6 +395,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
                 isListening && "shazam-pulse"
               )}
               onClick={startVoiceInput}
+              poster={alonsoAvatarPhoto}
               muted
               loop
               playsInline
@@ -449,6 +452,7 @@ export default function AvatarTTS({ onSpeak, className }: AvatarTTSProps) {
                 isListening && "shazam-pulse"
               )}
               onClick={startVoiceInput}
+              poster={alonsoAvatarPhoto}
               muted
               loop
               playsInline
