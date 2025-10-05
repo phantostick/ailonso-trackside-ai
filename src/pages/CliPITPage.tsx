@@ -158,7 +158,7 @@ export default function CliPITPage() {
             <div className="text-xs text-muted-foreground">Social Shares</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-accent">98%</div>
+            <div className="text-2xl font-bold text-accent">100%</div>
             <div className="text-xs text-muted-foreground">Rights Cleared</div>
           </div>
         </div>
