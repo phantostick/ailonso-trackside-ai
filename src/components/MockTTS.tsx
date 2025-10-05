@@ -88,7 +88,6 @@ export default function MockTTS({ onHighlightRequest, text, isSpeaking: external
         )}
         {!text && (
           <>
-        <h3 className="racing-subtitle mb-2">CliPIT AI Assistant</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Ask me to find and trim specific race highlights
         </p>
